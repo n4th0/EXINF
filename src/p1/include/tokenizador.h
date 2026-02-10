@@ -4,7 +4,6 @@
 #include <array>
 #include <iostream>
 #include <list>
-#include <unordered_map>
 
 #define MAX_DELIM 256
 
@@ -102,9 +101,6 @@ public:
   bool PasarAminuscSinAcentos() const;
   // Devuelve el contenido de la variable privada "pasarAminuscSinAcentos"
 
-  string delimitersToString() const;
-  unordered_map<int, char> strtohash(const string &s) const;
-
 private:
   array<bool, MAX_DELIM> delim{}; // all false initially
   // muy probablemente hay que usar otro estructura de datos
@@ -120,7 +116,7 @@ private:
   bool isUrl(const string &str, unsigned &posDel, unsigned inicio) const;
 
   bool isDec(const string &str, unsigned &posDel, unsigned &inicio,
-             bool lookingToken) const;
+             bool lookingToken, bool &spezial) const;
 
   bool isMail(const string &str, unsigned &posDel, unsigned &inicio,
               bool lookingToken) const;

@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 #include <string_view>
+using namespace std;
 
 // Inicializa delimiters a delimitadoresPalabra filtrando que no se
 // introduzcan delimitadores repetidos (de izquierda a derecha, en cuyo caso
@@ -52,8 +53,13 @@ Tokenizador &Tokenizador::operator=(const Tokenizador &t) {
   // esto tiene que ser muy lento
   // (*this) = Tokenizador(t.delimitersToString(), t.casosEspeciales,
   // t.pasarAminuscSinAcentos);
-  (*this) = Tokenizador(t.DelimitadoresPalabra(), t.casosEspeciales,
-                        t.pasarAminuscSinAcentos);
+  this->casosEspeciales = t.casosEspeciales;
+  this->delimiters = t.delimiters;
+  this->pasarAminuscSinAcentos = t.pasarAminuscSinAcentos;
+
+  for (unsigned i = 0; i < MAX_DELIM; i++) {
+    this->delim[i] = t.delim[i];
+  }
 
   return *this;
 }
@@ -141,7 +147,7 @@ bool Tokenizador::isUrl(const string &str, unsigned &posDel,
 }
 
 bool Tokenizador::isDec(const string &str, unsigned &posDel, unsigned &inicio,
-                        bool lookingToken) const {
+                        bool lookingToken, bool &spezial) const {
 
   // comprobar que por detrás es todo número
   if (lookingToken) {
@@ -174,7 +180,7 @@ bool Tokenizador::isDec(const string &str, unsigned &posDel, unsigned &inicio,
       continue;
     }
 
-    if (str[i] == ' ' || delim[(unsigned char)str[i]]) {
+    if (str[i] == ' ') {
       // he llegado al espacio (delimita el numero)
 
       if (i - posDel == 1) { // no hay más allá del ',' o '.'
@@ -186,36 +192,36 @@ bool Tokenizador::isDec(const string &str, unsigned &posDel, unsigned &inicio,
     }
 
     // caso ".4043%" o ".4043& "
-    if (((str[i] == '%' || str[i] == '$') &&
-             // hay un espacio despues      || termina justo
-             // despues
-             ((i + 1 < str.size() && str[i + 1] == ' ')) ||
-         i + 1 == str.size())) {
+    if ((str[i] == '%' || str[i] == '$') &&
+        // hay un espacio despues      || termina justo
+        // despues
+        ((i + 1 < str.size() && str[i + 1] == ' ') || i + 1 == str.size())) {
 
-      if ((i + 1) - posDel == 1) { // no hay más alla del '.' o ','
+      if ((i + 1) - posDel == 1) { // no hay antes del '%' o '$'
         return false;
       }
 
-      posDel = i + 1;
+      posDel = i;
+      spezial = true;
+      return true;
+    }
+
+    if (delim[(unsigned char)str[i]]) {
+      posDel = i;
       return true;
     }
 
     if (!isNum(str[i])) {
-
-      // cout << i << endl;
-      // cout << posDel << endl;
-
       return false;
     }
   }
 
-  if (isNum(str[posDel])) {
+  if (isNum(str[i - 1])) {
     posDel = i;
   } else {
     posDel = i - 1;
   }
-  // cerr << "Error: unespected behaviour of isDec" << endl;
-  // should not be able to arrive here
+
   return true;
 }
 
@@ -225,7 +231,12 @@ bool Tokenizador::isMail(const string &str, unsigned &posDel, unsigned &inicio,
   if (!lookingToken && str[posDel] != '@') {
     return false;
   }
+  if ((posDel + 1 < str.size() && str[posDel + 1] == ' ') ||
+      posDel + 1 == str.size()) {
+    return false;
+  }
 
+  bool habia_antes_un_del_esp = false;
   // TODO: "something@.ua.es" es mail?
   unsigned i = posDel + 1;
   for (; i < str.size(); i++) {
@@ -239,20 +250,35 @@ bool Tokenizador::isMail(const string &str, unsigned &posDel, unsigned &inicio,
       return true;
     }
 
-    if ((str[i] == '_' || str[i] == '.' || str[i] == '-') &&
-        (i + 1 < str.size() && str[i + 1] == ' ')) {
-      return false;
+    if (habia_antes_un_del_esp &&
+        (str[i] == '_' || str[i] == '.' || str[i] == '-')) {
+      // algo@--
+      if (posDel == i - 2) {
+        return false;
+      }
+      posDel = i - 1;
+      return true;
     }
 
-    // termina en -/./_
-    if (str[i] == '_' && str[i] == '.' && str[i] == '-' &&
-        (i == str.size() - 1)) {
-      return false;
+    // si llega al final con un . no es un mail. lo es si hay
+    // main antes
+    // "algo@b-" -> algo@b
+    if ((str[i] == '_' || str[i] == '.' || str[i] == '-') &&
+        ((i == str.size() - 1) || (i + 1 < str.size() && str[i + 1] == ' '))) {
+
+      if (posDel == i - 1) {
+        return false;
+      }
+      posDel = i;
+      return true;
     }
 
     if ((str[i] == '_' || str[i] == '.' || str[i] == '-')) {
+      habia_antes_un_del_esp = true;
       continue;
     }
+
+    habia_antes_un_del_esp = false;
 
     if (delim[(unsigned char)str[i]]) {
       posDel = i;
@@ -419,20 +445,31 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
   if (casosEspeciales) {
     bool lookingToken = false;
     unsigned inicio = 0;
+    bool he_comprobado_que_antes_habia_un_mail = false;
+    bool spezial;
 
     for (unsigned pos = 0; pos < str.size(); pos++) {
+      spezial = false;
       unsigned char c = s[pos];
 
       // is url
       if (lookingToken && s[pos] == ':' && isUrl(s, pos, inicio)) {
-        tokens.emplace_back(s.substr(inicio, pos - inicio));
+        string aux = s.substr(inicio, pos - inicio);
+
+        if (pasarAminuscSinAcentos) {
+          for (unsigned i = 0; i < aux.size(); i++) {
+            aux[i] = normalize(aux[i]);
+          }
+        }
+        he_comprobado_que_antes_habia_un_mail = false;
+        tokens.emplace_back(aux);
         lookingToken = false;
         continue;
       }
 
       // is Num
       if ((s[pos] == '.' || s[pos] == ',') && delim[c] &&
-          isDec(s, pos, inicio, lookingToken)) {
+          isDec(s, pos, inicio, lookingToken, spezial)) {
 
         string aux = s.substr(inicio, pos - inicio);
         if (s[inicio] == '.' || s[inicio] == ',') {
@@ -443,7 +480,14 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
         //   tokens.emplace_back(aux);
         //   ++pos;
         // } else {
+
         tokens.emplace_back(aux);
+
+        if (spezial) {
+          tokens.emplace_back(s.substr(pos, 1));
+          pos++;
+        }
+
         //   pos++;
         // }
 
@@ -452,7 +496,7 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
         //   lookingToken = false;
         //   continue;
         // }
-
+        he_comprobado_que_antes_habia_un_mail = false;
         // tokens.emplace_back(s.substr(inicio, pos - inicio));
         lookingToken = false;
         continue;
@@ -460,11 +504,17 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
 
       // is Mail
       if (lookingToken && s[pos] == '@' &&
+          !he_comprobado_que_antes_habia_un_mail &&
           isMail(s, pos, inicio, lookingToken)) {
 
         tokens.emplace_back(s.substr(inicio, pos - inicio));
+        // cout << "lo detecto como mail" << endl;
         lookingToken = false;
         continue;
+      }
+
+      if (lookingToken && s[pos] == '@') {
+        he_comprobado_que_antes_habia_un_mail = true;
       }
 
       // is isAcron
@@ -472,6 +522,7 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
           isAcron(s, pos, inicio, lookingToken)) {
         tokens.emplace_back(s.substr(inicio, pos - inicio));
         lookingToken = false;
+        he_comprobado_que_antes_habia_un_mail = false;
         continue;
       }
 
@@ -480,13 +531,17 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
           isMultip(s, pos, inicio, lookingToken)) {
         tokens.emplace_back(s.substr(inicio, pos - inicio));
         lookingToken = false;
+        he_comprobado_que_antes_habia_un_mail = false;
         continue;
       }
+
+      // cout << "llego " << pos << endl;
 
       if (delim[c]) {
         if (lookingToken) {
           tokens.emplace_back(s.substr(inicio, pos - inicio));
           lookingToken = false;
+          he_comprobado_que_antes_habia_un_mail = false;
         }
       } else {
         if (!lookingToken) {
@@ -495,6 +550,7 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
         }
       }
     }
+
     if (lookingToken) {
       tokens.emplace_back(s.substr(inicio));
     }
@@ -529,34 +585,180 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
 bool Tokenizador::Tokenizar(const string &NomFichEntr,
                             const string &NomFichSal) const {
   ifstream i;
-  ofstream f;
+  ofstream f2;
 
-  string cadena;
-  list<string> tokens;
+  string str;
 
   i.open(NomFichEntr.c_str());
+  f2.open(NomFichSal.c_str());
+
+  // i2.open(NomFichSal.c_str());
 
   if (!i) {
     cerr << "ERROR : No existe el archivo : " << NomFichEntr << endl;
     return false;
+  } else if (!f2) {
+    cerr << "ERROR : No se ha podido abrir el archivo : " << NomFichSal << endl;
+    return false;
   } else {
 
     while (!i.eof()) {
-      cadena = "";
-      getline(i, cadena);
-      if (cadena.length() != 0) {
-        Tokenizar(cadena, tokens);
+      str = "";
+      getline(i, str);
+      if (str.length() != 0) {
+
+        /// inicio Tokenizar
+        // tokens.clear();
+
+        // string s = str;
+
+        if (pasarAminuscSinAcentos) {
+          for (unsigned i = 0; i < str.size(); i++) {
+            str[i] = normalize(str[i]);
+          }
+        }
+
+        if (casosEspeciales) {
+          bool lookingToken = false;
+          unsigned inicio = 0;
+          bool he_comprobado_que_antes_habia_un_mail = false;
+          bool spezial;
+
+          for (unsigned pos = 0; pos < str.size(); pos++) {
+            unsigned char c = str[pos];
+
+            spezial = false;
+            // is url
+            if (lookingToken && str[pos] == ':' && isUrl(str, pos, inicio)) {
+              string aux = str.substr(inicio, pos - inicio);
+
+              // creo que esto es innecesario
+              if (pasarAminuscSinAcentos) {
+                for (unsigned i = 0; i < aux.size(); i++) {
+                  aux[i] = normalize(aux[i]);
+                }
+              }
+
+              he_comprobado_que_antes_habia_un_mail = false;
+              f2 << aux << endl;
+              // tokens.emplace_back(aux);
+              lookingToken = false;
+              continue;
+            }
+
+            // is Num
+            if ((str[pos] == '.' || str[pos] == ',') && delim[c] &&
+                isDec(str, pos, inicio, lookingToken, spezial)) {
+
+              string aux = str.substr(inicio, pos - inicio);
+
+              if (str[inicio] == '.' || str[inicio] == ',') {
+                aux = "0" + aux;
+              }
+
+              f2 << aux << endl;
+              // tokens.emplace_back(aux);
+
+              if (spezial) {
+                pos++;
+                f2 << str[pos] << endl;
+              }
+
+              he_comprobado_que_antes_habia_un_mail = false;
+              // tokens.emplace_back(s.substr(inicio, pos - inicio));
+              lookingToken = false;
+              continue;
+            }
+
+            // is Mail
+            if (lookingToken && str[pos] == '@' &&
+                !he_comprobado_que_antes_habia_un_mail &&
+                isMail(str, pos, inicio, lookingToken)) {
+
+              f2 << str.substr(inicio, pos - inicio) << endl;
+              // tokens.emplace_back(s.substr(inicio, pos - inicio));
+              lookingToken = false;
+              continue;
+            }
+
+            if (lookingToken && str[pos] == '@') {
+              he_comprobado_que_antes_habia_un_mail = true;
+            }
+
+            // is isAcron
+            if (lookingToken && str[pos] == '.' && delim[(unsigned char)'.'] &&
+                isAcron(str, pos, inicio, lookingToken)) {
+              // tokens.emplace_back(s.substr(inicio, pos - inicio));
+              f2 << str.substr(inicio, pos - inicio) << endl;
+              lookingToken = false;
+              he_comprobado_que_antes_habia_un_mail = false;
+              continue;
+            }
+
+            // is Multi
+            if (lookingToken && str[pos] == '-' && delim[(unsigned char)'-'] &&
+                isMultip(str, pos, inicio, lookingToken)) {
+              f2 << str.substr(inicio, pos - inicio) << endl;
+              // tokens.emplace_back(s.substr(inicio, pos - inicio));
+              lookingToken = false;
+              he_comprobado_que_antes_habia_un_mail = false;
+              continue;
+            }
+
+            if (delim[c]) {
+              if (lookingToken) {
+                f2 << str.substr(inicio, pos - inicio) << endl;
+                // tokens.emplace_back(s.substr(inicio, pos - inicio));
+                lookingToken = false;
+                he_comprobado_que_antes_habia_un_mail = false;
+              }
+            } else {
+              if (!lookingToken) {
+                inicio = pos;
+                lookingToken = true;
+              }
+            }
+          }
+          if (lookingToken) {
+
+            f2 << str.substr(inicio) << endl;
+            // tokens.emplace_back(s.substr(inicio));
+          }
+
+        } else {
+          bool lookingToken = false;
+          int inicio = 0;
+          for (unsigned pos = 0; pos < str.size(); pos++) {
+            unsigned char c = str[pos];
+            if (delim[c]) {
+              if (lookingToken) {
+                f2 << str.substr(inicio, pos - inicio) << endl;
+                // tokens.emplace_back(s.substr(inicio, pos - inicio));
+                lookingToken = false;
+              }
+            } else {
+              if (!lookingToken) {
+                inicio = pos;
+                lookingToken = true;
+              }
+            }
+          }
+          if (lookingToken) {
+            f2 << str.substr(inicio) << endl;
+            // tokens.emplace_back(s.substr(inicio));
+          }
+        }
       }
     }
   }
 
   i.close();
-  f.open(NomFichSal.c_str());
-  list<string>::iterator itS;
-  for (itS = tokens.begin(); itS != tokens.end(); itS++) {
-    f << (*itS) << endl;
-  }
-  f.close();
+  // f2.open(NomFichSal.c_str());
+  // list<string>::iterator itS;
+  // for (itS = tokens.begin(); itS != tokens.end(); itS++) {
+  //   f2 << (*itS) << endl;
+  // }
+  f2.close();
   return true;
 }
 
@@ -577,7 +779,6 @@ bool Tokenizador::Tokenizar(const string &i) const {
 // la salida en ficheros (uno por cada línea de i) cuyo nombre será el leído
 // en i añadiéndole extensión .tk, y que contendrá una palabra en cada línea
 // del fichero leído en i. Devolverá true si se realiza la tokenización de
-// forma correcta de todos los archivos que contiene i; devolverá false en
 // caso contrario enviando a cerr el mensaje correspondiente (p.ej. que no
 // exista el archivo i, o que se trate de un directorio, enviando a "cerr" los
 // archivos de i que no existan o que sean directorios; luego no se ha de
@@ -599,6 +800,8 @@ bool Tokenizador::TokenizarListaFicheros(const string &NomFich) const {
 
       // merece la pena comprobar que no lea archivos duplicados
       getline(i, cadena);
+
+      // cout << "llego " << cadena << endl;
       if (cadena.length() != 0) {
 
         if (!Tokenizar(cadena, cadena + ".tk"))
@@ -697,27 +900,6 @@ bool Tokenizador::PasarAminuscSinAcentos() const {
 /////////////////////////////////
 //        MIAS                ///
 /////////////////////////////////
-
-string Tokenizador::delimitersToString() const {
-  string s;
-
-  // for (auto &p : delimiters) {
-  //   // s += to_string(p.second);
-  // }
-
-  return s;
-}
-
-unordered_map<int, char> Tokenizador::strtohash(const string &s) const {
-
-  unordered_map<int, char> result;
-
-  // for (unsigned i = 0; i < s.size(); i++) {
-  //   result[(unsigned int)s[i]] = s[i];
-  // }
-
-  return result;
-}
 
 string Tokenizador::uniq() const {
   string result = "";
