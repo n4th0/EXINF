@@ -24,8 +24,6 @@ Tokenizador::Tokenizador(const string &delimitadoresPalabra,
                          const bool &kcasosEspeciales,
                          const bool &minuscSinAcentos) {
 
-  // this->delimiters = this->strtohash(delimitadoresPalabra); // TODO: CHANGE
-
   this->casosEspeciales = kcasosEspeciales;
   this->pasarAminuscSinAcentos = minuscSinAcentos;
 
@@ -127,10 +125,9 @@ bool Tokenizador::isUrl(const string &str, unsigned &posDel,
 
   // buscar excluyendo x delimitadores
   for (; k < str.size(); k++) {
-    if ((!delim[static_cast<unsigned char>(str[k])] || str[k] == '_' ||
-         str[k] == ':' || str[k] == '/' || str[k] == '.' || str[k] == '-' ||
-         str[k] == '?' || str[k] == '=' || str[k] == '#' || str[k] == '&' ||
-         str[k] == '@') &&
+    if ((!delim[(unsigned char)(str[k])] || str[k] == '_' || str[k] == ':' ||
+         str[k] == '/' || str[k] == '.' || str[k] == '-' || str[k] == '?' ||
+         str[k] == '=' || str[k] == '#' || str[k] == '&' || str[k] == '@') &&
         str[k] != ' ') {
     } else {
       break;
@@ -148,6 +145,7 @@ bool Tokenizador::isUrl(const string &str, unsigned &posDel,
 
 bool Tokenizador::isDec(const string &str, unsigned &posDel, unsigned &inicio,
                         bool lookingToken, bool &spezial) const {
+  int SIZE = str.size();
 
   // comprobar que por detrás es todo número
   if (lookingToken) {
@@ -169,7 +167,7 @@ bool Tokenizador::isDec(const string &str, unsigned &posDel, unsigned &inicio,
 
   unsigned i = posDel + 1;
   bool hay_delimitador_antes = true; // punto/coma
-  for (; i < str.size(); i++) {
+  for (; i < SIZE; i++) {
     if (hay_delimitador_antes && (str[i] == '.' || str[i] == ',')) {
       return false;
     }
@@ -195,7 +193,7 @@ bool Tokenizador::isDec(const string &str, unsigned &posDel, unsigned &inicio,
     if ((str[i] == '%' || str[i] == '$') &&
         // hay un espacio despues      || termina justo
         // despues
-        ((i + 1 < str.size() && str[i + 1] == ' ') || i + 1 == str.size())) {
+        ((i + 1 < SIZE && str[i + 1] == ' ') || i + 1 == SIZE)) {
 
       if ((i + 1) - posDel == 1) { // no hay antes del '%' o '$'
         return false;
@@ -228,18 +226,18 @@ bool Tokenizador::isDec(const string &str, unsigned &posDel, unsigned &inicio,
 bool Tokenizador::isMail(const string &str, unsigned &posDel, unsigned &inicio,
                          bool lookingToken) const {
 
+  int SIZE = str.size();
   if (!lookingToken && str[posDel] != '@') {
     return false;
   }
-  if ((posDel + 1 < str.size() && str[posDel + 1] == ' ') ||
-      posDel + 1 == str.size()) {
+  if ((posDel + 1 < SIZE && str[posDel + 1] == ' ') || posDel + 1 == SIZE) {
     return false;
   }
 
   bool habia_antes_un_del_esp = false;
   // TODO: "something@.ua.es" es mail?
   unsigned i = posDel + 1;
-  for (; i < str.size(); i++) {
+  for (; i < SIZE; i++) {
 
     if (str[i] == '@') {
       return false;
@@ -264,7 +262,7 @@ bool Tokenizador::isMail(const string &str, unsigned &posDel, unsigned &inicio,
     // main antes
     // "algo@b-" -> algo@b
     if ((str[i] == '_' || str[i] == '.' || str[i] == '-') &&
-        ((i == str.size() - 1) || (i + 1 < str.size() && str[i + 1] == ' '))) {
+        ((i == SIZE - 1) || (i + 1 < SIZE && str[i + 1] == ' '))) {
 
       if (posDel == i - 1) {
         return false;
@@ -285,7 +283,7 @@ bool Tokenizador::isMail(const string &str, unsigned &posDel, unsigned &inicio,
       return true;
     }
 
-    if (i + 1 == str.size()) {
+    if (i + 1 == SIZE) {
       posDel = i + 1;
       return true;
     }
@@ -299,13 +297,14 @@ bool Tokenizador::isMail(const string &str, unsigned &posDel, unsigned &inicio,
 bool Tokenizador::isAcron(const string &str, unsigned &posDel, unsigned &inicio,
                           bool lookingToken) const {
 
+  int SIZE = str.size();
   if (!lookingToken && str[posDel] != '.') {
     return false;
   }
 
   unsigned i = posDel + 1;
 
-  if (i < str.size() && str[i] == ' ') {
+  if (i < SIZE && str[i] == ' ') {
     return false;
   }
 
@@ -313,7 +312,7 @@ bool Tokenizador::isAcron(const string &str, unsigned &posDel, unsigned &inicio,
 
   bool hay_punto_antes = true;
   bool hay_acronimo = false;
-  for (; i < str.size(); i++) {
+  for (; i < SIZE; i++) {
 
     // hay 2 puntos seguidos
     if (str[i] == '.' && hay_punto_antes) {
@@ -356,13 +355,14 @@ bool Tokenizador::isAcron(const string &str, unsigned &posDel, unsigned &inicio,
 bool Tokenizador::isMultip(const string &str, unsigned &posDel,
                            unsigned &inicio, bool lookingToken) const {
 
+  int SIZE = str.size();
   if (!lookingToken && str[posDel] != '-') {
     return false;
   }
 
   unsigned i = posDel + 1;
 
-  if (i < str.size() && str[i] == ' ') {
+  if (i < SIZE && str[i] == ' ') {
     return false;
   }
 
@@ -370,7 +370,7 @@ bool Tokenizador::isMultip(const string &str, unsigned &posDel,
 
   bool hay_punto_antes = true;
   bool hay_acronimo = false;
-  for (; i < str.size(); i++) {
+  for (; i < SIZE; i++) {
 
     // hay 2 puntos seguidos
     if (str[i] == '-' && hay_punto_antes) {
@@ -409,24 +409,6 @@ bool Tokenizador::isMultip(const string &str, unsigned &posDel,
 
   return true;
 }
-
-// string::size_type Tokenizador::buscar(const string &str, unsigned pos,
-//                                       bool busca_delimitador) const {
-//   for (size_t i = pos; i < str.size(); i++) {
-//     if (busca_delimitador) {
-//       if (delim[static_cast<unsigned char>(str[i])] ||
-//           (casosEspeciales && str[i] == ':')) {
-//         return i;
-//       }
-//     } else {
-//       if (!delim[static_cast<unsigned char>(str[i])] &&
-//           !(casosEspeciales && str[i] == ':')) {
-//         return i;
-//       }
-//     }
-//   }
-//   return string::npos;
-// }
 
 // Tokeniza str devolviendo el resultado en tokens. La lista tokens se vaciará
 // antes de almacenar el resultado de la tokenización.
@@ -472,6 +454,7 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
           isDec(s, pos, inicio, lookingToken, spezial)) {
 
         string aux = s.substr(inicio, pos - inicio);
+
         if (s[inicio] == '.' || s[inicio] == ',') {
           aux = "0" + aux;
         }
@@ -632,12 +615,12 @@ bool Tokenizador::Tokenizar(const string &NomFichEntr,
             if (lookingToken && str[pos] == ':' && isUrl(str, pos, inicio)) {
               string aux = str.substr(inicio, pos - inicio);
 
-              // creo que esto es innecesario
-              if (pasarAminuscSinAcentos) {
-                for (unsigned i = 0; i < aux.size(); i++) {
-                  aux[i] = normalize(aux[i]);
-                }
-              }
+              // // creo que esto es innecesario
+              // if (pasarAminuscSinAcentos) {
+              //   for (unsigned i = 0; i < aux.size(); i++) {
+              //     aux[i] = normalize(aux[i]);
+              //   }
+              // }
 
               he_comprobado_que_antes_habia_un_mail = false;
               f2 << aux << endl;
@@ -846,14 +829,14 @@ void Tokenizador::DelimitadoresPalabra(const string &nuevoDelimiters) {
   }
 
   if (this->CasosEspeciales()) {
-    delim[static_cast<unsigned char>(' ')] = true;
+    delim[(unsigned char)(' ')] = true;
   }
 
   delimiters = nuevoDelimiters;
   delimiters = uniq();
 
   for (unsigned i = 0; i < delimiters.size(); i++) {
-    delim[static_cast<unsigned char>(delimiters[i])] = true;
+    delim[(unsigned char)(delimiters[i])] = true;
     // cout << "llego con " << delimiters[i] << endl;
     // delim[(unsigned)delimiters[i]] = true;
   }

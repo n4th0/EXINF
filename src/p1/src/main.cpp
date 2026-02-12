@@ -1,28 +1,35 @@
-#include "tokenizador.h"
 #include <iostream>
-#include <list>
 #include <string>
+#include <list>
+#include "tokenizador.h"
 
-#include <chrono>
-#include <iostream>
 using namespace std;
 
 ///////// Comprobación de que vacíe la lista resultado
 
-int main() {
+void imprimirListaSTL(const list<string>& cadena)
+{
+        list<string>::const_iterator itCadena;
+        for(itCadena=cadena.begin();itCadena!=cadena.end();itCadena++)
+        {
+                cout << (*itCadena) << ", ";
+        }
+        cout << endl;
+}
 
-  bool kCasosEspeciales = true, kpasarAminusculas = false;
+int
+main(void)
+{
+        bool kCasosEspeciales = true, kpasarAminusculas = false;
 
-  Tokenizador a("@.&", true, true);
+        list<string> lt1, lt2;
 
-  a.DelimitadoresPalabra("/ &_:/.?&-=#@");
+Tokenizador a("@.&", true, true);
+list<string> tokens;
+a.DelimitadoresPalabra("/ &_:/.?&-=#@");
+string s = "p0 Http://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013 p1 p2"; 
 
-  auto inicio = std::chrono::high_resolution_clock::now();
+a.Tokenizar(s, tokens);   
+         imprimirListaSTL(tokens);
 
-  a.TokenizarListaFicheros("temp.txt");
-
-  auto fin = std::chrono::high_resolution_clock::now();
-
-  std::chrono::duration<double> duracion = fin - inicio;
-  std::cout << "Tiempo: " << duracion.count() << " segundos\n";
 }
