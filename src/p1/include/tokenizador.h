@@ -6,6 +6,7 @@
 #include <list>
 
 #define MAX_DELIM 256
+#define BUFFER_SIZE 8192
 
 using namespace std;
 
@@ -111,21 +112,23 @@ private:
   // forma de almacenamiento interna para mejorar la eficiencia, este campo debe
   // permanecer para indicar el orden en que se introdujeron los delimitadores
   // unordered_map<int, char> delimiters;
-  string uniq() const;
+  // string uniq() const;
 
-  bool isUrl(const string &str, unsigned &posDel, unsigned inicio) const;
+  bool isUrl(const char *str, size_t str_len, unsigned &posDel,
+             unsigned inicio) const;
 
-  bool isDec(const string &str, unsigned &posDel, unsigned &inicio,
-             bool lookingToken, bool &spezial) const;
+  bool isDec(const char *str, size_t str_len, unsigned &posDel,
+             unsigned &inicio, bool lookingToken, bool &spezial) const;
 
-  bool isMail(const string &str, unsigned &posDel, unsigned &inicio,
-              bool lookingToken) const;
+  bool isMail(const char *str, size_t str_len, unsigned &posDel,
+              unsigned &inicio, bool lookingToken) const;
 
-  bool isAcron(const string &str, unsigned &posDel, unsigned &inicio,
-               bool lookingToken) const;
+  bool isAcron(const char *str, size_t str_len, unsigned &posDel,
+               unsigned &inicio, bool lookingToken) const;
 
-  bool isMultip(const string &str, unsigned &posDel, unsigned &inicio,
-                bool lookingToken) const;
+  bool isMultip(const char *str, size_t str_len, unsigned &posDel,
+                unsigned &inicio, bool lookingToken) const;
+
   // size_t buscar(const string &str, unsigned pos, bool busca_delimitador)
   // const;
   //
