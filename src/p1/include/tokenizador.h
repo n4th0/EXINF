@@ -114,20 +114,20 @@ private:
   // unordered_map<int, char> delimiters;
   // string uniq() const;
 
-  bool isUrl(const char *str, size_t str_len, unsigned &posDel,
+  bool isUrl(char *str, size_t str_len, unsigned &posDel,
              unsigned inicio) const;
 
-  bool isDec(const char *str, size_t str_len, unsigned &posDel,
-             unsigned &inicio, bool lookingToken, bool &spezial) const;
+  bool isDec(char *str, size_t str_len, unsigned &posDel, unsigned &inicio,
+             bool lookingToken, bool &spezial) const;
 
-  bool isMail(const char *str, size_t str_len, unsigned &posDel,
-              unsigned &inicio, bool lookingToken) const;
+  bool isMail(char *str, size_t str_len, unsigned &posDel, unsigned &inicio,
+              bool lookingToken) const;
 
-  bool isAcron(const char *str, size_t str_len, unsigned &posDel,
-               unsigned &inicio, bool lookingToken) const;
+  bool isAcron(char *str, size_t str_len, unsigned &posDel, unsigned &inicio,
+               bool lookingToken) const;
 
-  bool isMultip(const char *str, size_t str_len, unsigned &posDel,
-                unsigned &inicio, bool lookingToken) const;
+  bool isMultip(char *str, size_t str_len, unsigned &posDel, unsigned &inicio,
+                bool lookingToken) const;
 
   // size_t buscar(const string &str, unsigned pos, bool busca_delimitador)
   // const;
