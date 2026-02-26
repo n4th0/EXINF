@@ -129,6 +129,20 @@ private:
   bool isMultip(char *str, size_t str_len, unsigned &posDel, unsigned &inicio,
                 bool lookingToken) const;
 
+  bool isUrl_pasar(char *str, size_t str_len, unsigned &posDel,
+                   unsigned inicio) const;
+
+  bool isDec_pasar(char *str, size_t str_len, unsigned &posDel,
+                   unsigned &inicio, bool lookingToken, bool &spezial) const;
+
+  bool isMail_pasar(char *str, size_t str_len, unsigned &posDel,
+                    unsigned &inicio, bool lookingToken) const;
+
+  bool isAcron_pasar(char *str, size_t str_len, unsigned &posDel,
+                     unsigned &inicio, bool lookingToken) const;
+
+  bool isMultip_pasar(char *str, size_t str_len, unsigned &posDel,
+                      unsigned &inicio, bool lookingToken) const;
   // size_t buscar(const string &str, unsigned pos, bool busca_delimitador)
   // const;
   //

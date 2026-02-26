@@ -1,7 +1,10 @@
 # Prerequisites
 *.d
 
+# practica 1 
+*.tk
 practica1
+
 # Compiled Object files
 *.slo
 *.lo

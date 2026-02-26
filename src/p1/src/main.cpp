@@ -1,35 +1,41 @@
-#include <iostream>
-#include <string>
-#include <list>
 #include "tokenizador.h"
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <string>
 
+#include <chrono>
+#include <iostream>
 using namespace std;
 
-///////// Comprobación de que vacíe la lista resultado
+int main() {
 
-void imprimirListaSTL(const list<string>& cadena)
-{
-        list<string>::const_iterator itCadena;
-        for(itCadena=cadena.begin();itCadena!=cadena.end();itCadena++)
-        {
-                cout << (*itCadena) << ", ";
-        }
-        cout << endl;
-}
+  {
 
-int
-main(void)
-{
-        bool kCasosEspeciales = true, kpasarAminusculas = false;
+    double avg = 0;
+    for (int i = 0; i < 30; i++) {
 
-        list<string> lt1, lt2;
+      bool kCasosEspeciales = false, kpasarAminusculas = false;
 
-Tokenizador a("@.&", true, true);
-list<string> tokens;
-a.DelimitadoresPalabra("/ &_:/.?&-=#@");
-string s = "p0 Http://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013 p1 p2"; 
+      Tokenizador a;
+      a.CasosEspeciales(kCasosEspeciales);
+      a.PasarAminuscSinAcentos(kpasarAminusculas);
 
-a.Tokenizar(s, tokens);   
-         imprimirListaSTL(tokens);
+      a.DelimitadoresPalabra(",;:.-+*\\ '\"{}[]()<>¡!¿?&#=\t@");
+      // a.DelimitadoresPalabra(",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t@");
+      // a.DelimitadoresPalabra("/ &_:/.?&-=#@");
 
+      auto inicio = std::chrono::high_resolution_clock::now();
+
+      // a.TokenizarListaFicheros("./temp.txt");
+      a.TokenizarListaFicheros("./test/listaFicheros.txt");
+      auto fin = std::chrono::high_resolution_clock::now();
+
+      std::chrono::duration<double> duracion = fin - inicio;
+
+      avg += duracion.count();
+      // std::cout << "Tiempo: " << duracion.count() << " segundos\n";
+    }
+    cout << avg / 30 << endl;
+  }
 }
