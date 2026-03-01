@@ -23,6 +23,7 @@ mg
 y
 750
 mg
+
 1
 NOMBRE
 DEL
@@ -55,6 +56,7 @@ comprimidos
 recubiertos
 con
 película
+
 2
 COMPOSICIÓN
 CUALITATIVA
@@ -65,6 +67,7 @@ principio
 activo
 es
 famciclovir
+
 Comprimidos
 de
 125
@@ -76,6 +79,7 @@ contiene
 mg
 de
 famciclovir
+
 Comprimidos
 de
 250
@@ -87,6 +91,7 @@ contiene
 mg
 de
 famciclovir
+
 Comprimidos
 de
 500
@@ -98,6 +103,7 @@ contiene
 mg
 de
 famciclovir
+
 Comprimidos
 de
 750
@@ -109,6 +115,7 @@ contiene
 mg
 de
 famciclovir
+
 Para
 la
 lista
@@ -119,6 +126,7 @@ ver
 sección
 6
 1
+
 3
 FORMA
 FARMACÉUTICA
@@ -126,6 +134,7 @@ Comprimidos
 recubiertos
 con
 película
+
 Comprimidos
 de
 125
@@ -152,6 +161,7 @@ o
 por
 la
 otra
+
 Comprimidos
 de
 500
@@ -181,6 +191,8 @@ nada
 por
 la
 otra
+
+
 4
 DATOS
 CLÍNICOS
@@ -193,11 +205,13 @@ Famvir
 está
 indicado
 en
+
 1
 Tratamiento
 del
 herpes
 zóster
+
 2
 Tratamiento
 del
@@ -208,6 +222,7 @@ primer
 episodio
 y
 recurrencias
+
 3
 Tratamiento
 supresor
@@ -215,6 +230,7 @@ del
 herpes
 genital
 recurrente
+
 4
 2
 Posología
@@ -287,6 +303,7 @@ precoz
 es
 el
 tratamiento
+
 4
 2
 2
@@ -336,6 +353,7 @@ aparición
 de
 las
 lesiones
+
 4
 2
 2
@@ -377,6 +395,7 @@ aparición
 de
 las
 lesiones
+
 4
 2
 3
@@ -450,6 +469,7 @@ dos
 veces
 al
 día
+
 Ancianos
 Sólo
 se
@@ -461,12 +481,14 @@ casos
 de
 insuficiencia
 renal
+
 Niños
 No
 se
 han
 efectuado
 estudios
+
 Pacientes
 con
 insuficiencia
@@ -516,6 +538,7 @@ siguientes
 pautas
 de
 dosificación
+
 A
 En
 el
@@ -526,6 +549,7 @@ infecciones
 por
 herpes
 zóster
+
 Aclaramiento
 de
 creatinina
@@ -533,6 +557,7 @@ Dosis
 ml/min/1
 73
 m2
+
 40
 250
 mg
@@ -563,6 +588,7 @@ episodio
 del
 herpes
 genital
+
 Aclaramiento
 de
 creatinina
@@ -570,6 +596,7 @@ Dosis
 ml/min/1
 73
 m2
+
 30
 250
 mg
@@ -593,6 +620,7 @@ recurrencias
 del
 herpes
 genital
+
 Aclaramiento
 de
 creatinina
@@ -600,6 +628,7 @@ Dosis
 ml/min/1
 73
 m2
+
 10
 125
 mg
@@ -617,6 +646,7 @@ recurrencias
 del
 herpes
 genital
+
 Aclaramiento
 de
 creatinina
@@ -624,6 +654,7 @@ Dosis
 ml/min/1
 73
 m2
+
 30
 250
 mg
@@ -672,6 +703,7 @@ después
 de
 la
 diálisis
+
 La
 dosis
 recomendada
@@ -689,6 +721,7 @@ pacientes
 con
 herpes
 genital
+
 Pacientes
 con
 insuficiencia
@@ -699,6 +732,7 @@ requiere
 modificar
 la
 dosis
+
 Dosis
 diaria
 máxima
@@ -729,6 +763,7 @@ el
 tratamiento
 con
 Famvir
+
 4
 3
 Contraindicaciones
@@ -748,6 +783,7 @@ antivirales
 del
 mismo
 grupo
+
 4
 4
 Advertencias
@@ -797,6 +833,7 @@ con
 función
 renal
 normal
+
 El
 herpes
 genital
@@ -833,6 +870,7 @@ ha
 sido
 ya
 iniciado
+
 Durante
 el
 tratamiento
@@ -875,6 +913,7 @@ cuando
 mantengan
 relaciones
 sexuales
+
 Famvir
 500
 mg
@@ -935,6 +974,7 @@ mg
 y
 250
 mg
+
 4
 5
 Interacción
@@ -1003,6 +1043,7 @@ de
 zidovudina
 y
 famciclovir
+
 4
 6
 Embarazo
@@ -1058,6 +1099,7 @@ supere
 el
 riesgo
 potencial
+
 Lactancia
 Los
 estudios
@@ -1098,6 +1140,7 @@ en
 la
 leche
 materna
+
 4
 7
 Efectos
@@ -1128,6 +1171,7 @@ mientras
 esté
 tomando
 Famvir
+
 Se
 le
 debe
@@ -1156,6 +1200,7 @@ conducir
 o
 utilizar
 maquinaria
+
 4
 8
 Reacciones
@@ -1203,6 +1248,7 @@ pacientes
 que
 recibieron
 placebo
+
 La
 tabla
 siguiente
@@ -1233,6 +1279,7 @@ la
 comercialización
 de
 Famvir
+
 Las
 reacciones
 adversas
@@ -1257,6 +1304,7 @@ poco
 frecuentes
 1/1
 000
+
 1/100
 raras
 1/10
@@ -1267,6 +1315,7 @@ muy
 raras
 1/10
 000
+
 Trastornos
 de
 la
@@ -1286,15 +1335,18 @@ predominantemente
 en
 pacientes
 ancianos
+
 Muy
 raras
 Alucinaciones
+
 Trastornos
 del
 sistema
 nervioso
 Raras
 Cefalea
+
 Muy
 raras
 Vértigo/mareos
@@ -1306,14 +1358,17 @@ Trastornos
 gastrointestinales
 Raras
 Náuseas
+
 Muy
 raras
 Vómitos
+
 Trastornos
 hepatobiliares
 Muy
 raras
 Ictericia
+
 Trastornos
 de
 la
@@ -1354,6 +1409,7 @@ soporte
 si
 fuera
 necesario
+
 En
 raras
 ocasiones
@@ -1391,6 +1447,7 @@ disfunción
 renal
 del
 paciente
+
 Penciclovir
 es
 dializable
@@ -1408,6 +1465,8 @@ tras
 horas
 de
 hemodiálisis
+
+
 5
 PROPIEDADES
 FARMACOLÓGICAS
@@ -1469,6 +1528,7 @@ y
 virus
 Epstein
 Barr
+
 En
 varios
 modelos
@@ -1482,6 +1542,7 @@ antiviral
 de
 famciclovir
 Famvir
+
 administrado
 oralmente
 este
@@ -1525,6 +1586,7 @@ presencia
 de
 la
 timidina
+
 quinasa
 inducida
 por
@@ -1577,6 +1639,7 @@ concentraciones
 terapéuticas
 de
 penciclovir
+
 La
 forma
 de
@@ -1593,6 +1656,7 @@ virus
 herpes
 simple
 VHS
+
 se
 debe
 a
@@ -1646,6 +1710,7 @@ a
 aciclovir
 recientemente
 aislada
+
 En
 un
 estudio
@@ -1683,6 +1748,7 @@ tres
 veces
 al
 día
+
 En
 un
 estudio
@@ -1722,6 +1788,7 @@ y
 asintomática
 de
 VHS
+
 5
 2
 Propiedades
@@ -1740,6 +1807,7 @@ tras
 su
 administración
 oral
+
 convirtiéndose
 en
 penciclovir
@@ -1759,6 +1827,7 @@ Famvir
 es
 del
 77%
+
 Tras
 la
 administración
@@ -1813,6 +1882,7 @@ de
 45
 50
 minutos
+
 Las
 curvas
 de
@@ -1834,6 +1904,7 @@ tres
 veces
 al
 día
+
 La
 semivida
 plasmática
@@ -1865,6 +1936,7 @@ repetidas
 de
 famciclovir
 Famvir
+
 Penciclovir
 y
 su
@@ -1878,6 +1950,7 @@ a
 proteínas
 plasmáticas
 20%
+
 Famciclovir
 Famvir
 se
@@ -1907,6 +1980,7 @@ Famvir
 inalterado
 en
 orina
+
 b
 Características
 en
@@ -1933,6 +2007,7 @@ oral
 de
 famciclovir
 Famvir
+
 5
 3
 Datos
@@ -2006,6 +2081,7 @@ ratones
 de
 cualquier
 sexo
+
 Genotoxicidad
 Tras
 una
@@ -2038,6 +2114,7 @@ famciclovir
 Famvir
 fuera
 genotóxico
+
 Se
 ha
 observado
@@ -2078,6 +2155,7 @@ de
 reparación
 de
 ADN
+
 Toxicidad
 para
 la
@@ -2105,6 +2183,7 @@ degenerativos
 del
 epitelio
 testicular
+
 Famciclovir
 Famvir
 no
@@ -2147,6 +2226,8 @@ tratadas
 con
 famciclovir
 Famvir
+
+
 6
 DATOS
 FARMACÉUTICOS
@@ -2164,6 +2245,7 @@ mg
 Núcleo
 del
 comprimido
+
 Hidroxipropil
 celulosa
 Lactosa
@@ -2178,11 +2260,13 @@ magnesio
 Recubrimiento
 del
 comprimido
+
 Dióxido
 de
 titanio
 E
 171
+
 hipromelosa
 polietilenglicol
 4000
@@ -2197,6 +2281,7 @@ mg
 Núcleo
 del
 comprimido
+
 Hidroxipropil
 celulosa
 Glicolato
@@ -2209,11 +2294,13 @@ magnesio
 Recubrimiento
 del
 comprimido
+
 Dióxido
 de
 titanio
 E
 171
+
 hipromelosa
 polietilenglicol
 4000
@@ -2224,6 +2311,7 @@ polietilenglicol
 Incompatibilidades
 No
 aplicable
+
 6
 3
 Periodo
@@ -2231,6 +2319,7 @@ de
 validez
 3
 años
+
 6
 4
 Precauciones
@@ -2249,6 +2338,7 @@ en
 el
 embalaje
 original
+
 Mantener
 fuera
 del
@@ -2260,6 +2350,7 @@ vista
 de
 los
 niños
+
 6
 5
 Naturaleza
@@ -2296,6 +2387,7 @@ x
 750
 mg
 comprimidos
+
 6
 6
 Instrucciones
@@ -2305,6 +2397,8 @@ y
 manipulación
 Ninguna
 especial
+
+
 7
 TITULAR
 DE
@@ -2316,6 +2410,7 @@ Novartis
 Farmacéutica
 S
 A
+
 Gran
 Via
 de
@@ -2337,6 +2432,7 @@ Fax
 245
 44
 10
+
 8
 NÚMEROS
 DE
@@ -2403,6 +2499,9 @@ LA
 REVISIÓN
 DEL
 TEXTO
+
+
 Prospectos
 de
 medicamentos
+

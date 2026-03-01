@@ -14,16 +14,19 @@ la
 información
 del
 medicamento
+
 1
 NOMBRE
 DEL
 MEDICAMENTO
+
 2
 COMPOSICIÓN
 CUALITATIVA
 Y
 CUANTITATIVA
 Electrolitos
+
 Sodio
 154
 0
@@ -31,6 +34,7 @@ mmol/l
 Cloruros
 Propiedades
 fisicoquímicas
+
 Peso
 molecular
 medio
@@ -46,6 +50,7 @@ medio
 en
 número
 Mn
+
 Sustitución
 molar
 0
@@ -54,6 +59,7 @@ molar
 45
 0
 55
+
 Osmolaridad
 teórica
 310
@@ -63,9 +69,13 @@ pH
 0
 7
 0
+
 3
 FORMA
 FARMACÉUTICA
+
+
+
 4
 DATOS
 CLÍNICOS
@@ -105,6 +115,7 @@ mejorar
 la
 perfusión
 tisular
+
 4
 2
 Posología
@@ -146,9 +157,11 @@ de
 a
 1000
 ml
+
 Dosis
 máxima
 diaria
+
 No
 se
 deberían
@@ -191,10 +204,12 @@ individuo
 de
 75
 kg
+
 Velocidad
 máxima
 de
 infusión
+
 La
 velocidad
 máxima
@@ -223,6 +238,7 @@ a
 33
 ml/kg/min
 y
+
 en
 situaciones
 de
@@ -256,6 +272,7 @@ antes
 de
 la
 infusión
+
 Para
 la
 administración
@@ -272,6 +289,7 @@ precauciones
 especiales
 de
 empleo
+
 4
 3
 Contraindicaciones
@@ -280,25 +298,32 @@ conocida
 al
 hidroxietil
 almidón
+
 Hipervolemia
+
 Hiperhidratación
+
 Insuficiencia
 cardíaca
 congestiva
+
 Insuficiencia
 renal
 con
 oliguria
 y
 anuria
+
 Alteraciones
 graves
 de
 la
 coagulación
 sanguínea
+
 Edema
 pulmonar
+
 4
 4
 Advertencias
@@ -350,6 +375,7 @@ sanguínea
 perfusión
 periférica
 diuresis
+
 Reacciones
 anafilácticas
 Las
@@ -378,6 +404,7 @@ apartado
 8
 Reacciones
 adversas
+
 Con
 el
 fin
@@ -407,6 +434,7 @@ y
 con
 observación
 cuidadosa
+
 Hemohes
 10%
 es
@@ -430,6 +458,7 @@ de
 una
 solución
 cristaloide
+
 En
 pacientes
 con
@@ -490,6 +519,7 @@ de
 la
 creatinina
 sérica
+
 Hemodilución
 Como
 todos
@@ -557,6 +587,7 @@ crónicas
 o
 diatesis
 hemorrágica
+
 Por
 la
 infusión
@@ -621,6 +652,7 @@ lugar
 una
 dilución
 excesiva
+
 Sobrecarga
 circulatoria
 La
@@ -664,6 +696,7 @@ y/o
 fallo
 cardíaco
 congestivo
+
 Deterioro
 del
 aclaramiento
@@ -720,6 +753,7 @@ monitorizada
 durante
 la
 infusión
+
 Tras
 la
 administración
@@ -788,6 +822,7 @@ de
 la
 función
 pancreática
+
 Uso
 en
 pediatría
@@ -810,6 +845,7 @@ a
 los
 12
 años
+
 Uso
 en
 ancianos
@@ -831,6 +867,7 @@ de
 la
 función
 renal
+
 Hipernatremia
 Hemohes
 se
@@ -842,6 +879,7 @@ en
 pacientes
 con
 hipernatremia
+
 4
 5
 Interacciones
@@ -868,6 +906,7 @@ administración
 de
 otros
 fármacos
+
 En
 casos
 de
@@ -916,6 +955,7 @@ evitar
 resultados
 falsos
 positivos
+
 4
 6
 Embarazo
@@ -960,6 +1000,7 @@ específico
 de
 la
 sustancia
+
 Además
 debido
 al
@@ -1008,6 +1049,7 @@ potenciales
 para
 el
 feto
+
 Lactancia
 Se
 desconoce
@@ -1031,6 +1073,7 @@ producto
 en
 madres
 lactantes
+
 4
 7
 Efectos
@@ -1045,6 +1088,7 @@ utilizar
 maquinaria
 No
 procede
+
 4
 8
 Reacciones
@@ -1103,6 +1147,7 @@ resultado
 ser
 de
 utilidad
+
 También
 se
 ha
@@ -1164,6 +1209,7 @@ periférico
 de
 extremidades
 inferiores
+
 Si
 se
 producen
@@ -1192,6 +1238,7 @@ de
 un
 agente
 antihistamínico
+
 Tratamiento
 de
 emergencia
@@ -1199,6 +1246,7 @@ de
 las
 reacciones
 anafilácticas
+
 A
 continuación
 se
@@ -1211,6 +1259,7 @@ de
 las
 reacciones
 anafilácticas
+
 Intensidad/Grado
 I
 a
@@ -1231,6 +1280,7 @@ farmacológico
 Detener
 la
 infusión
+
 Intensidad/Grado
 I
 b
@@ -1247,7 +1297,9 @@ cefalea
 enrojecimiento
 urticaria
 generalizada
+
 parestesia
+
 Medidas
 y
 tratamiento
@@ -1255,6 +1307,7 @@ farmacológico
 Detener
 la
 infusión
+
 Intensidad/Grado
 II
 Manifestación
@@ -1287,6 +1340,7 @@ farmacológico
 Detener
 la
 infusión
+
 Intensidad/Grado
 III
 Manifestación
@@ -1312,6 +1366,7 @@ farmacológico
 Detener
 la
 infusión
+
 Intensidad/Grado
 IV
 Manifestación
@@ -1336,6 +1391,7 @@ farmacológico
 Detener
 la
 infusión
+
 4
 9
 Sobredosificación
@@ -1354,6 +1410,7 @@ volumen
 En
 este
 caso
+
 se
 debe
 detener
@@ -1368,6 +1425,8 @@ la
 administración
 de
 diuréticos
+
+
 5
 PROPIEDADES
 FARMACOLÓGICAS
@@ -1426,6 +1485,7 @@ producto
 hidroxietil
 almidón
 utilizado
+
 El
 hidroxietil
 almidón
@@ -1460,6 +1520,7 @@ aproximadamente
 80
 000
 Daltons
+
 El
 material
 de
@@ -1497,6 +1558,7 @@ de
 amilopectina
 por
 la
+
 amilasa
 endógena
 Como
@@ -1519,6 +1581,7 @@ SM
 de
 0
 5
+
 La
 duración
 de
@@ -1559,6 +1622,7 @@ eliminadas
 por
 los
 riñones
+
 Como
 todos
 los
@@ -1595,6 +1659,7 @@ adverso
 sobre
 su
 función
+
 5
 1
 Propiedades
@@ -1636,6 +1701,7 @@ volumen
 infundido
 aproximadamente
 145%
+
 La
 infusión
 de
@@ -1668,6 +1734,7 @@ menos
 4
 6
 horas
+
 5
 2
 Propiedades
@@ -1739,6 +1806,7 @@ orina
 en
 24
 horas
+
 sólo
 aproximadamente
 el
@@ -1768,6 +1836,7 @@ después
 de
 la
 infusión
+
 5
 3
 Datos
@@ -1793,6 +1862,8 @@ ver
 Embarazo
 y
 lactancia
+
+
 6
 DATOS
 FARMACÉUTICOS
@@ -1818,6 +1889,7 @@ mezclas
 de
 compatibilidad
 conocida
+
 6
 3
 Período
@@ -1831,6 +1903,7 @@ es
 de
 3
 años
+
 6
 4
 Precauciones
@@ -1843,6 +1916,7 @@ temperatura
 ambiente
 No
 congelar
+
 No
 utilizar
 después
@@ -1870,6 +1944,7 @@ sin
 partículas
 en
 suspensión
+
 No
 usar
 si
@@ -1880,6 +1955,7 @@ signos
 visibles
 de
 deterioro
+
 6
 5
 Naturaleza
@@ -1900,6 +1976,7 @@ de
 y
 10
 unidades
+
 Envases
 de
 polietileno
@@ -1913,6 +1990,7 @@ de
 y
 10
 unidades
+
 6
 6
 Instrucciones
@@ -1925,6 +2003,7 @@ instrucciones
 especiales
 de
 uso/manipulación
+
 No
 reutilizar
 una
@@ -1932,6 +2011,7 @@ vez
 abierto
 el
 envase
+
 La
 administración
 debe
@@ -1947,6 +2027,8 @@ para
 evitar
 su
 contaminación
+
+
 7
 NOMBRE
 Y
@@ -1957,6 +2039,7 @@ DE
 LA
 AUTORIZACIÓN
 DE
+
 8
 NÚMERO
 DE
@@ -1981,6 +2064,8 @@ DEL
 TEXTO
 Febrero
 2000
+
+
 HEMOHES
 10%
 1
@@ -1988,6 +2073,7 @@ UNIDAD
 500ML
 SOL
 IV
+
 HEMOHES
 10%
 10
@@ -1995,6 +2081,7 @@ UNIDADES
 1000ML
 SOL
 IV
+
 HEMOHES
 10%
 10
@@ -2005,3 +2092,4 @@ IV
 Prospectos
 de
 medicamentos
+

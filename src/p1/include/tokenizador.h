@@ -6,7 +6,7 @@
 #include <list>
 
 #define MAX_DELIM 256
-#define BUFFER_SIZE 8192
+#define BUFFER_SIZE 4096
 
 using namespace std;
 
@@ -129,6 +129,8 @@ private:
   bool isMultip(char *str, size_t str_len, unsigned &posDel, unsigned &inicio,
                 bool lookingToken) const;
 
+  // igual que las anteriores pero pasando a minusculas a la vez que avanzo (me
+  // quito un if)
   bool isUrl_pasar(char *str, size_t str_len, unsigned &posDel,
                    unsigned inicio) const;
 
@@ -143,11 +145,7 @@ private:
 
   bool isMultip_pasar(char *str, size_t str_len, unsigned &posDel,
                       unsigned &inicio, bool lookingToken) const;
-  // size_t buscar(const string &str, unsigned pos, bool busca_delimitador)
-  // const;
-  //
-  //
-  //
+
   // Si true detectará palabras compuestas y casos especiales. Sino,
   // trabajará al igual que el algoritmo propuesto en la sección "Versión del
   // tokenizador vista en clase"

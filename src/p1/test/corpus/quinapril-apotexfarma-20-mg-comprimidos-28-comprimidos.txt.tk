@@ -15,6 +15,7 @@ la
 información
 del
 medicamento
+
 1
 NOMBRE
 DEL
@@ -40,6 +41,7 @@ Farma
 mg
 comprimidos
 EFG
+
 2
 COMPOSICION
 CUALITATIVA
@@ -54,6 +56,7 @@ Farma
 5
 mg
 contiene
+
 Quinapril
 DOE
 hidrocloruro
@@ -68,6 +71,7 @@ Farma
 20
 mg
 contiene
+
 Quinapril
 DOE
 hidrocloruro
@@ -82,6 +86,7 @@ Farma
 40
 mg
 contiene
+
 Quinapril
 DOE
 hidrocloruro
@@ -92,6 +97,8 @@ excipientes
 ver
 6
 1
+
+
 3
 FORMA
 FARMACEUTICA
@@ -99,6 +106,7 @@ Comprimidos
 recubiertos
 con
 película
+
 Quinapril
 Apotex
 Farma
@@ -120,6 +128,7 @@ ranurados
 en
 una
 cara
+
 Quinapril
 Apotex
 Farma
@@ -133,6 +142,10 @@ de
 forma
 redonda
 biconvexa
+
+
+
+
 4
 DATOS
 CLINICOS
@@ -168,6 +181,7 @@ en
 pacientes
 con
 hipertensión
+
 Insuficiencia
 cardiaca
 congestiva
@@ -194,6 +208,7 @@ a
 un
 glucósido
 cardíaco
+
 4
 2
 Posología
@@ -218,7 +233,9 @@ afectan
 a
 su
 absorción
+
 Hipertensión
+
 Monoterapia
 la
 dosis
@@ -317,6 +334,7 @@ de
 hasta
 80
 mg/día
+
 Tratamiento
 concomitante
 con
@@ -362,6 +380,7 @@ otras
 formas
 de
 interacción
+
 Disfunción
 renal
 los
@@ -390,6 +409,7 @@ aclaramiento
 renal
 de
 creatinina
+
 El
 plan
 de
@@ -409,23 +429,28 @@ renal
 es
 el
 siguiente
+
 60
 ml/min
 10
 mg/día
+
 30
 60
 ml/min
 5
 mg/día
+
 10
 30
 ml/min
 2
 5
 mg/día
+
 10
 ml/min
+
 No
 hay
 suficiente
@@ -445,6 +470,7 @@ pacientes
 Insuficiencia
 cardiaca
 congestiva
+
 Quinapril
 está
 indicado
@@ -530,6 +556,7 @@ a
 la
 terapia
 concomitante
+
 Disfunción
 renal
 datos
@@ -627,6 +654,7 @@ respuesta
 clínica
 y
 hemodinámica
+
 4
 3
 Contraindicaciones
@@ -671,6 +699,7 @@ cruzada
 con
 otros
 IECAs
+
 4
 4
 Advertencias
@@ -691,6 +720,7 @@ pacientes
 tratados
 con
 IECAs
+
 incluido
 un
 0
@@ -828,6 +858,7 @@ ver
 8
 Reacciones
 adversas
+
 Se
 ha
 comunicado
@@ -996,6 +1027,7 @@ los
 de
 otras
 razas
+
 En
 pacientes
 con
@@ -1022,8 +1054,10 @@ al
 administrarse
 un
 IECA
+
 Reacciones
 anafilácticas
+
 Desensibilización
 los
 pacientes
@@ -1065,6 +1099,7 @@ tras
 su
 readministración
 accidental
+
 Aféresis
 LDL
 se
@@ -1095,7 +1130,9 @@ concomitante
 con
 un
 IECA
+
 Hipotensión
+
 Raramente
 se
 ha
@@ -1218,6 +1255,7 @@ la
 dosis
 de
 quinapril
+
 Si
 apareciera
 hipotensión
@@ -1276,6 +1314,7 @@ si
 fuera
 el
 caso
+
 Los
 pacientes
 en
@@ -1317,7 +1356,9 @@ dosis
 bajas
 del
 mismo
+
 Neutropenia/agranulocitosis
+
 Los
 IECAs
 raramente
@@ -1355,6 +1396,7 @@ enfermedades
 del
 colágeno
 vascular
+
 Raramente
 se
 ha
@@ -1391,10 +1433,12 @@ de
 los
 leucocitos
 sanguíneos
+
 Morbilidad
 y
 mortalidad
 fetal/neonatal
+
 Los
 IECAs
 pueden
@@ -1442,6 +1486,7 @@ medicación
 debe
 ser
 discontinuada
+
 Cuando
 los
 IECAs
@@ -1543,6 +1588,7 @@ durante
 el
 primer
 trimestre
+
 deben
 ser
 informadas
@@ -1569,6 +1615,7 @@ pronto
 como
 sea
 posible
+
 Las
 pacientes
 que
@@ -1645,6 +1692,7 @@ vital
 para
 la
 madre
+
 Otros
 riesgos
 potenciales
@@ -1656,6 +1704,7 @@ a
 IECAs
 incluyen
 prematuridad
+
 retardo
 del
 crecimiento
@@ -1708,6 +1757,7 @@ afectar
 al
 desarrollo
 fetal
+
 Los
 nacidos
 expuestos
@@ -1743,6 +1793,7 @@ y
 la
 perfusión
 renal
+
 Empleo
 en
 pediatría
@@ -1758,6 +1809,7 @@ no
 ha
 sido
 establecida
+
 MINISTERIO
 Empleo
 en
@@ -1789,6 +1841,7 @@ es
 de
 10
 mg
+
 administrados
 una
 vez
@@ -1799,6 +1852,7 @@ alcanzar
 la
 respuesta
 óptima
+
 Los
 pacientes
 ancianos
@@ -1892,8 +1946,10 @@ de
 algunos
 individuos
 ancianos
+
 Precauciones
 generales
+
 Función
 renal
 deteriorada
@@ -1913,6 +1969,7 @@ como
 membranas
 de
 poliacrilonitrilo
+
 pueden
 presentar
 reacciones
@@ -1946,6 +2003,7 @@ inhibición
 del
 sistema
 renina
+
 angiotensina
 pueden
 esperarse
@@ -1994,12 +2052,14 @@ azoemia
 progresiva
 y
 ocasionalmente
+
 con
 fracaso
 renal
 agudo
 y/o
 muerte
+
 La
 vida
 media
@@ -2078,6 +2138,7 @@ renal
 de
 estos
 pacientes
+
 En
 estudios
 clínicos
@@ -2139,6 +2200,7 @@ primeras
 semanas
 de
 tratamiento
+
 Algunos
 pacientes
 hipertensos
@@ -2201,6 +2263,7 @@ con
 diuréticos
 y/o
 quinapril
+
 Hipoglucemia
 y
 pacientes
@@ -2233,6 +2296,7 @@ de
 los
 pacientes
 diabéticos
+
 Hipercaliemia
 y
 diuréticos
@@ -2246,6 +2310,7 @@ ocurre
 con
 otros
 IECAs
+
 quinapril
 puede
 elevar
@@ -2328,6 +2393,7 @@ otras
 formas
 de
 interacción
+
 Tos
 como
 con
@@ -2362,6 +2428,7 @@ inducida
 por
 los
 IECAs
+
 Cirugía
 y
 anestesia
@@ -2411,6 +2478,7 @@ expansión
 de
 volumen
 plasmático
+
 4
 5
 Interacción
@@ -2472,6 +2540,7 @@ quinapril
 y
 tetraciclinas
 conjuntamente
+
 Litio
 se
 han
@@ -2536,6 +2605,7 @@ litio
 pueden
 verse
 incrementados
+
 Otros
 agentes
 no
@@ -2554,9 +2624,11 @@ con
 propranolol
 hidroclorotiazida
 digoxina
+
 cimetidina
 o
 warfarina
+
 Terapia
 diurética
 concomitante
@@ -2605,6 +2677,7 @@ primera
 dosis
 de
 quinapril
+
 pueden
 ser
 minimizados
@@ -2680,6 +2753,7 @@ y
 forma
 de
 administración
+
 Agentes
 que
 incrementan
@@ -2729,6 +2803,7 @@ niveles
 séricos
 de
 potasio
+
 Insulina
 e
 hipoglucemiantes
@@ -2755,6 +2830,7 @@ precauciones
 especiales
 de
 empleo
+
 4
 6
 Embarazo
@@ -2793,6 +2869,7 @@ daño
 y
 muerte
 fetal
+
 Si
 se
 detecta
@@ -2808,6 +2885,7 @@ suspendida
 lo
 antes
 posible
+
 Las
 pacientes
 en
@@ -2861,6 +2939,7 @@ Morbilidad
 y
 mortalidad
 fetal/neonatal
+
 Hasta
 cierto
 punto
@@ -2885,6 +2964,7 @@ a
 una
 madre
 lactante
+
 4
 7
 Efectos
@@ -2945,6 +3025,7 @@ al
 medicamento
 sea
 satisfactoria
+
 4
 8
 Reacciones
@@ -2964,6 +3045,7 @@ de
 individuos
 y
 pacientes
+
 siendo
 bien
 tolerado
@@ -3002,6 +3084,7 @@ un
 año
 o
 más
+
 Las
 reacciones
 adversas
@@ -3090,6 +3173,7 @@ en
 ensayos
 clínicos
 controlados
+
 Las
 reacciones
 adversas
@@ -3165,6 +3249,7 @@ aparecen
 en
 la
 tabla
+
 Porcentaje
 de
 pacientes
@@ -3174,6 +3259,7 @@ adversas
 en
 estudios
 controlados
+
 %Reacciones
 adversas
 Total
@@ -3191,6 +3277,7 @@ N
 %
 N
 579
+
 Dolor
 de
 cabeza
@@ -3402,12 +3489,14 @@ por
 insuficiencia
 cardiaca
 congestiva
+
 Incluye
 pacientes
 tratados
 únicamente
 por
 hipertensión
+
 Las
 reacciones
 adversas
@@ -3468,6 +3557,7 @@ postcomercialización
 fueron
 los
 siguientes
+
 Cardiovascular
 palpitaciones
 vasodilatación
@@ -3475,6 +3565,7 @@ angina
 de
 pecho
 taquicardia
+
 Gastrointestinal
 flatulencia
 sequedad
@@ -3483,11 +3574,13 @@ boca
 o
 garganta
 pancreatitis
+
 Nervioso/psiquiátrico
 somnolencia
 vértigo
 depresión
 nerviosismo
+
 Dérmico
 prurito
 rash
@@ -3497,18 +3590,21 @@ alopecia
 pénfigo
 dermatitis
 exfoliativa
+
 Urogenital
 impotencia
 infecciones
 del
 tracto
 urinario
+
 Otros
 edema
 artralgia
 ambliopía
 anemia
 hemolítica
+
 Reacciones
 raras
 0
@@ -3563,9 +3659,11 @@ ha
 sido
 muy
 infrecuente
+
 Hallazgos
 de
 laboratorio
+
 Hallazgos
 de
 laboratorio
@@ -3577,6 +3675,7 @@ descrito
 agranulocitosis
 y
 neutropenia
+
 siendo
 de
 dudosa
@@ -3593,6 +3692,7 @@ precauciones
 especiales
 de
 empleo
+
 Hipercaliemia
 ver
 4
@@ -3603,6 +3703,7 @@ precauciones
 especiales
 de
 empleo
+
 Creatinina
 y
 BUN
@@ -3633,6 +3734,7 @@ el
 y
 el
 2%
+
 respectivamente
 de
 los
@@ -3674,6 +3776,7 @@ el
 curso
 del
 tratamiento
+
 4
 9
 Sobredosificación
@@ -3762,6 +3865,8 @@ diálisis
 peritoneal
 o
 hemodiálisis
+
+
 5
 PROPIEDADES
 FARMACOLOGICAS
@@ -3821,6 +3926,7 @@ sobre
 la
 frecuencia
 cardiaca
+
 La
 actividad
 antihipertensiva
@@ -3862,6 +3968,7 @@ A
 las
 dosis
 recomendadas
+
 los
 efectos
 antihipertensivos
@@ -3883,6 +3990,7 @@ tratamiento
 a
 largo
 plazo
+
 La
 valoración
 hemodinámica
@@ -3938,6 +4046,7 @@ o
 fracción
 de
 filtración
+
 El
 uso
 concomitante
@@ -3970,6 +4079,7 @@ cada
 agente
 por
 separado
+
 Los
 efectos
 terapéuticos
@@ -4003,6 +4113,7 @@ adversas
 en
 gente
 anciana
+
 La
 administración
 de
@@ -4035,6 +4146,7 @@ aumenta
 el
 gasto
 cardiaco
+
 En
 un
 estudio
@@ -4089,6 +4201,7 @@ la
 acetilcolina
 estudio
 TREND
+
 Los
 inhibidores
 de
@@ -4103,6 +4216,7 @@ sensibilidad
 a
 la
 insulina
+
 Mecanismo
 de
 acción
@@ -4238,6 +4352,7 @@ de
 renina
 plasmática
 ARP
+
 A
 pesar
 de
@@ -4305,6 +4420,7 @@ predominante
 con
 renina
 baja
+
 que
 en
 el
@@ -4342,6 +4458,7 @@ efecto
 terapéutico
 de
 quinapril
+
 Estudios
 realizados
 en
@@ -4381,6 +4498,7 @@ de
 sus
 efectos
 antihipertensivos
+
 5
 2
 Propiedades
@@ -4477,6 +4595,7 @@ administración
 oral
 de
 quinapril
+
 El
 quinaprilato
 se
@@ -4629,6 +4748,7 @@ la
 desesterificación
 del
 quinapril
+
 Estudios
 en
 ratas
@@ -4643,6 +4763,7 @@ cruzan
 la
 barrera
 hematoencefálica
+
 5
 3
 Datos
@@ -4881,6 +5002,8 @@ y
 1
 mg/kg/día
 respectivamente
+
+
 6
 DATOS
 FARMACEUTICOS
@@ -4901,6 +5024,7 @@ comprimidos
 contienen
 carbonato
 magnésico
+
 hidroxipropilcelulosa
 crospovidona
 estearato
@@ -4924,6 +5048,7 @@ hierro
 amarillo
 E
 172
+
 Quinapril
 Apotex
 Farma
@@ -4933,6 +5058,7 @@ comprimidos
 contiene
 carbonato
 magnésico
+
 hidroxipropilcelulosa
 crospovidona
 estearato
@@ -4956,6 +5082,7 @@ hierro
 rojo
 E
 172
+
 6
 2
 Incompatibilidades
@@ -4963,6 +5090,7 @@ No
 se
 han
 descrito
+
 6
 3
 Periodo
@@ -4970,6 +5098,7 @@ de
 validez
 2
 años
+
 6
 4
 Precauciones
@@ -4983,6 +5112,7 @@ condiciones
 especiales
 de
 conservación
+
 MINISTERIO
 6
 5
@@ -4994,6 +5124,7 @@ recipiente
 Blister
 de
 Aluminio/Aluminio
+
 Quinapril
 Apotex
 Farma
@@ -5004,6 +5135,7 @@ envases
 con
 60
 comprimidos
+
 Quinapril
 Apotex
 Farma
@@ -5014,6 +5146,7 @@ envases
 con
 28
 comprimidos
+
 Quinapril
 Apotex
 Farma
@@ -5024,6 +5157,7 @@ envases
 con
 28
 comprimidos
+
 6
 6
 Instrucciones
@@ -5040,6 +5174,8 @@ de
 uso
 y
 manipulación
+
+
 7
 TITULAR
 DE
@@ -5050,6 +5186,7 @@ COMERCIALIZACIÓN
 TAMARANG
 S
 A
+
 C/
 Balmes
 84
@@ -5058,12 +5195,14 @@ Balmes
 08008
 BARCELONA
 ESPAÑA
+
 8
 NUMERO
 DE
 AUTORIZACIÓN
 DE
 COMERCIALIZACION
+
 9
 FECHA
 DE
@@ -5081,6 +5220,9 @@ LA
 REVISIÓN
 DEL
 TEXTO
+
+
 Prospectos
 de
 medicamentos
+

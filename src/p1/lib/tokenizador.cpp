@@ -1,58 +1,16 @@
 
 #include "../include/tokenizador.h"
-#include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iostream>
-
-#include <cstdlib>
-#include <filesystem>
-#include <numeric>
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <type_traits>
-#include <unordered_map>
-namespace fs = std::filesystem;
-#include <string_view>
+
 using namespace std;
-
-/*
-class FastFileReader {
-  char buffer[BUFFER_SIZE];
-  FILE *file;
-
-public:
-  bool open(const string &filename) {
-    file = fopen(filename.c_str(), "r");
-    // file.rdbuf()->pubsetbuf(buffer, BUFFER_SIZE);
-    // file.open(filename);
-    return file != NULL;
-  }
-
-  char *getline(bool &gets_a_line, size_t &str_len) {
-
-    size_t count = 0;
-    int c;
-    while ((c = fgetc(file)) != EOF && (c != (int)'\n')) {
-      buffer[count] = (char)c;
-      ++count;
-    }
-
-    str_len = count;
-
-    gets_a_line = c != EOF;
-
-    return buffer;
-  }
-
-  void close() { fclose(file); }
-};
-*/
-#include <cstdio>
-#include <string>
 
 class FastFileReader {
   // static constexpr size_t BUFFER_SIZE = 1 << 16; // 64KB
@@ -86,7 +44,7 @@ public:
       return nullptr;
     }
 
-    static thread_local char line[1 << 20]; // 1MB line buffer
+    static thread_local char line[BUFFER_SIZE]; // 1MB line buffer
     size_t count = 0;
 
     while (true) {
@@ -124,7 +82,7 @@ public:
 };
 
 class FastFileWriter {
-  char buffer[BUFFER_SIZE];
+  // char buffer[BUFFER_SIZE];
   FILE *file;
 
 public:
@@ -175,55 +133,11 @@ static uint8_t NORMALIZE_TABLE[256] = {
     175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
     190, 191,
     // 0xC0-0xDF: À-ß -> à-ß (mostly)
-    97, 97, 97, 97, 97, 97, 97, 99, 101, 101, 101, 101, 105, 105, 105, 105, 209,
+    97, 97, 97, 97, 97, 97, 97, 99, 101, 101, 101, 101, 105, 105, 105, 105, 208,
     0xF1, 111, 111, 111, 111, 111, 111, 117, 117, 117, 117, 117, 89, 223,
     // 0xE0-0xFF: à-ÿ
     223, 97, 97, 97, 97, 97, 97, 99, 231, 101, 101, 101, 105, 105, 105, 105,
     241, 111, 241, 111, 111, 111, 111, 111, 117, 117, 117, 117, 117, 117, 255};
-
-// class FastFileReader {
-//   static constexpr size_t BUFFER_SIZE = 8192;
-//   char buffer[BUFFER_SIZE];
-//   ifstream file;
-//
-// public:
-//   bool open(const string &filename) {
-//     file.rdbuf()->pubsetbuf(buffer, BUFFER_SIZE);
-//     file.open(filename);
-//     return file.is_open();
-//   }
-//
-//   bool getline(string &line) {
-//     line.clear();
-//     while (file.getline(buffer, BUFFER_SIZE)) {
-//       line = buffer;
-//       return true;
-//     }
-//     return false;
-//   }
-//
-//   void close() { file.close(); }
-// };
-//
-// class FastFileWriter {
-//   static constexpr size_t BUFFER_SIZE = 8192;
-//   char buffer[BUFFER_SIZE];
-//   ofstream file;
-//
-// public:
-//   bool open(const string &filename) {
-//     file.rdbuf()->pubsetbuf(buffer, BUFFER_SIZE);
-//     file.open(filename);
-//     return file.is_open();
-//   }
-//
-//   void writeln(const string_view &str) {
-//     file.write(str.data(), str.size());
-//     file.put('\n');
-//   }
-//
-//   void close() { file.close(); }
-// };
 
 // Inicializa delimiters a delimitadoresPalabra filtrando que no se
 // introduzcan delimitadores repetidos (de izquierda a derecha, en cuyo caso
@@ -246,11 +160,6 @@ Tokenizador::Tokenizador(const Tokenizador &t)
       delimiters(t.delimiters) {
 
   copy(t.delim.begin(), t.delim.end(), delim.begin());
-
-  // (*this) =
-  //     Tokenizador(t.delimiters, t.casosEspeciales, t.pasarAminuscSinAcentos);
-  // (*this) = Tokenizador(delimitersToString(), this->casosEspeciales,
-  // this->pasarAminuscSinAcentos);
 }
 
 // Inicializa delimiters=",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t@"; casosEspeciales a
@@ -435,11 +344,6 @@ bool Tokenizador::isDec_pasar(char *str, size_t str_len, unsigned &posDel,
       return false;
     }
 
-    // if (hay_punto_coma_antes && delim[(unsigned char)str[i]]) {
-    //   posDel = i;
-    //   return true;
-    // }
-
     hay_punto_coma_antes = (str[i] == '.' || str[i] == ',');
 
     if (hay_punto_coma_antes) {
@@ -537,11 +441,6 @@ bool Tokenizador::isDec(char *str, size_t str_len, unsigned &posDel,
     if (hay_punto_coma_antes && (str[i] == '.' || str[i] == ',')) {
       return false;
     }
-
-    // if (hay_punto_coma_antes && delim[(unsigned char)str[i]]) {
-    //   posDel = i;
-    //   return true;
-    // }
 
     hay_punto_coma_antes = (str[i] == '.' || str[i] == ',');
 
@@ -760,8 +659,6 @@ bool Tokenizador::isAcron_pasar(char *str, size_t str_len, unsigned &posDel,
   if (i == SIZE) {
     return false;
   }
-
-  // busco el siguiente delimitador
 
   bool hay_punto_antes = true;
   bool hay_acronimo = false;
@@ -1037,14 +934,6 @@ void Tokenizador::Tokenizar(const string &str, list<string> &tokens) const {
       if (lookingToken && s[pos] == ':' &&
           isUrl(s.data(), s.size(), pos, inicio)) {
 
-        // string aux = s.substr(inicio, pos - inicio);
-
-        // if (pasarAminuscSinAcentos) {
-        //   for (unsigned i = 0; i < aux.size(); i++) {
-        //     aux[i] = normalize(aux[i]);
-        //   }
-        // }
-
         he_comprobado_que_antes_habia_un_mail = false;
         tokens.emplace_back(s, inicio, pos - inicio);
         lookingToken = false;
@@ -1168,15 +1057,15 @@ bool Tokenizador::Tokenizar(const string &NomFichEntr,
     return false;
   }
 
-  char *s;
-  bool getline = false;
-  while ((s = i.getline(getline, str_len)) && getline) {
-    if (str_len == 0) {
-      continue;
-    }
+  if (casosEspeciales) {
+    if (pasarAminuscSinAcentos) {
 
-    if (casosEspeciales) {
-      if (pasarAminuscSinAcentos) {
+      char *s;
+      bool getline = false;
+      while ((s = i.getline(getline, str_len)) && getline) {
+        if (str_len == 0) {
+          continue;
+        }
 
         bool lookingToken = false;
         unsigned inicio = 0;
@@ -1273,8 +1162,15 @@ bool Tokenizador::Tokenizar(const string &NomFichEntr,
         if (lookingToken) {
           f.writeln(s + inicio, str_len - inicio);
         }
-      } else {
+      }
+    } else {
 
+      char *s;
+      bool getline = false;
+      while ((s = i.getline(getline, str_len)) && getline) {
+        if (str_len == 0) {
+          continue;
+        }
         bool lookingToken = false;
         unsigned inicio = 0;
         bool he_comprobado_que_antes_habia_un_mail = false;
@@ -1370,94 +1266,96 @@ bool Tokenizador::Tokenizar(const string &NomFichEntr,
           f.writeln(s + inicio, str_len - inicio);
         }
       }
+    }
+
+  } else {
+
+    if (pasarAminuscSinAcentos) {
+
+      bool lookingToken = false;
+      char s1;
+      while ((s1 = i.getc()) && s1 != (char)EOF) {
+        s1 = normalize(s1);
+        unsigned char c = s1;
+        if (delim[c]) {
+          if (lookingToken) {
+            f.write('\n');
+            lookingToken = false;
+          }
+        } else {
+          if (!lookingToken) {
+            lookingToken = true;
+          }
+          f.write(s1);
+          if (s1 == '\n') {
+            lookingToken = false;
+          }
+        }
+      }
+
+      // bool lookingToken = false;
+      // int inicio = 0;
+      // for (unsigned pos = 0; pos < str_len; pos++) {
+      //   s[pos] = normalize(s[pos]);
+      //   unsigned char c = s[pos];
+      //   if (delim[c]) {
+      //     if (lookingToken) {
+      //       f.writeln(s + inicio, pos - inicio);
+      //       lookingToken = false;
+      //     }
+      //   } else {
+      //     if (!lookingToken) {
+      //       inicio = pos;
+      //       lookingToken = true;
+      //     }
+      //   }
+      // }
+      // if (lookingToken) {
+      //   f.writeln(s + inicio, str_len - inicio);
+      // }
 
     } else {
 
-      if (pasarAminuscSinAcentos) {
+      bool lookingToken = false;
+      char s1;
+      while ((s1 = i.getc()) && s1 != (char)EOF) {
 
-        bool lookingToken = false;
-        char s1;
-        while ((s1 = i.getc()) && s1 != (char)EOF) {
-          s1 = normalize(s1);
-          unsigned char c = s1;
-          if (delim[c]) {
-            if (lookingToken) {
-              f.write('\n');
-              lookingToken = false;
-            }
-          } else {
-            if (!lookingToken) {
-              lookingToken = true;
-            }
-            f.write(s1);
-            if (s1 == '\n') {
-              lookingToken = false;
-            }
+        unsigned char c = s1;
+        if (delim[c]) {
+          if (lookingToken) {
+            f.write('\n');
+            lookingToken = false;
+          }
+        } else {
+          if (!lookingToken) {
+            lookingToken = true;
+          }
+          f.write(s1);
+          if (s1 == '\n') {
+            lookingToken = false;
           }
         }
-
-        // bool lookingToken = false;
-        // int inicio = 0;
-        // for (unsigned pos = 0; pos < str_len; pos++) {
-        //   s[pos] = normalize(s[pos]);
-        //   unsigned char c = s[pos];
-        //   if (delim[c]) {
-        //     if (lookingToken) {
-        //       f.writeln(s + inicio, pos - inicio);
-        //       lookingToken = false;
-        //     }
-        //   } else {
-        //     if (!lookingToken) {
-        //       inicio = pos;
-        //       lookingToken = true;
-        //     }
-        //   }
-        // }
-        // if (lookingToken) {
-        //   f.writeln(s + inicio, str_len - inicio);
-        // }
-
-      } else {
-
-        bool lookingToken = false;
-        char s1;
-        while ((s1 = i.getc()) && s1 != (char)EOF) {
-          unsigned char c = s1;
-          if (delim[c]) {
-            if (lookingToken) {
-              f.write('\n');
-              lookingToken = false;
-            }
-          } else {
-            if (!lookingToken) {
-              lookingToken = true;
-            }
-            f.write(s1);
-            if (s1 == '\n') {
-              lookingToken = false;
-            }
-          }
-        }
-        // bool lookingToken = false;
-        // int inicio = 0;
-        // for (unsigned pos = 0; pos < str_len; pos++) {
-        //   unsigned char c = s[pos];
-        //   if (delim[c]) {
-        //     if (lookingToken) {
-        //       f.writeln(s + inicio, pos - inicio);
-        //       lookingToken = false;
-        //     }
-        //   } else {
-        //     if (!lookingToken) {
-        //       inicio = pos;
-        //       lookingToken = true;
-        //     }
-        //   }
-        // }
-        // if (lookingToken) {
-        //   f.writeln(s + inicio, str_len - inicio);
-        // }
       }
+
+      // bool lookingToken = false;
+      // int inicio = 0;
+      // for (unsigned pos = 0; pos < str_len; pos++) {
+      //   unsigned char c = s[pos];
+      //   if (delim[c]) {
+      //     if (lookingToken) {
+      //       f.writeln(s + inicio, pos - inicio);
+      //       lookingToken = false;
+      //     }
+      //   } else {
+      //     if (!lookingToken) {
+      //       inicio = pos;
+      //       lookingToken = true;
+      //     }
+      //   }
+      // }
+      // if (lookingToken) {
+      //   f.writeln(s + inicio, str_len - inicio);
+      // }
     }
   }
 
@@ -1479,7 +1377,6 @@ bool Tokenizador::Tokenizar(const string &i) const {
   return this->Tokenizar(i, i + ".tk");
 }
 
-// TODO: Optimizar al fallo
 //
 //
 // Tokeniza el fichero i que contiene un nombre de fichero por línea guardando
@@ -1491,22 +1388,36 @@ bool Tokenizador::Tokenizar(const string &i) const {
 // archivos de i que no existan o que sean directorios; luego no se ha de
 // interrumpir la ejecución si hay algún archivo en i que no exista)
 bool Tokenizador::TokenizarListaFicheros(const string &NomFich) const {
+  FastFileReader reader;
+  if (!reader.open(NomFich)) {
+    cerr << "ERROR: No se puede abrir el archivo de lista: " << NomFich << endl;
+    return false;
+  }
 
-  // return Tokenizar(NomFich, NomFich + ".tk");
-  fstream f;
-  string aux;
-  f.open(NomFich);
   bool todoCorrecto = true;
+  string nombreEntrada;
+  string nombreSalida;
+  nombreSalida.reserve(256);
 
-  while (getline(f, aux)) {
-    // cout << aux << endl;
-    if (!Tokenizar(aux, aux + ".tk")) {
+  bool ok;
+  size_t len;
+  char *linea;
+  while ((linea = reader.getline(ok, len)) && ok) {
+    if (len == 0)
+      continue;
+
+    nombreEntrada.assign(linea, len);
+
+    nombreSalida = nombreEntrada;
+    nombreSalida += ".tk";
+
+    if (!Tokenizar(nombreEntrada, nombreSalida)) {
+      cerr << "ERROR: No se pudo tokenizar: " << nombreEntrada << endl;
       todoCorrecto = false;
     }
   }
 
-  f.close();
-
+  reader.close();
   return todoCorrecto;
 }
 
@@ -1569,7 +1480,6 @@ string Tokenizador::DelimitadoresPalabra() const { return delimiters; }
 // Cambia la variable privada "casosEspeciales"
 void Tokenizador::CasosEspeciales(const bool &nuevoCasosEspeciales) {
 
-  /// TODO: mirar esto
   if (casosEspeciales)
     delim[(unsigned char)' '] = nuevoCasosEspeciales;
 
