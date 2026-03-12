@@ -44,7 +44,7 @@ public:
       return nullptr;
     }
 
-    static thread_local char line[BUFFER_SIZE]; // 1MB line buffer
+    static thread_local char line[BUFFER_SIZE];
     size_t count = 0;
 
     while (true) {
@@ -1272,90 +1272,102 @@ bool Tokenizador::Tokenizar(const string &NomFichEntr,
 
     if (pasarAminuscSinAcentos) {
 
-      bool lookingToken = false;
-      char s1;
-      while ((s1 = i.getc()) && s1 != (char)EOF) {
-        s1 = normalize(s1);
-        unsigned char c = s1;
-        if (delim[c]) {
-          if (lookingToken) {
-            f.write('\n');
-            lookingToken = false;
-          }
-        } else {
-          if (!lookingToken) {
-            lookingToken = true;
-          }
-          f.write(s1);
-          if (s1 == '\n') {
-            lookingToken = false;
-          }
-        }
-      }
-
       // bool lookingToken = false;
-      // int inicio = 0;
-      // for (unsigned pos = 0; pos < str_len; pos++) {
-      //   s[pos] = normalize(s[pos]);
-      //   unsigned char c = s[pos];
+      // char s1;
+      // while ((s1 = i.getc()) && s1 != (char)EOF) {
+      //   s1 = normalize(s1);
+      //   unsigned char c = s1;
       //   if (delim[c]) {
       //     if (lookingToken) {
-      //       f.writeln(s + inicio, pos - inicio);
+      //       f.write('\n');
       //       lookingToken = false;
       //     }
       //   } else {
       //     if (!lookingToken) {
-      //       inicio = pos;
       //       lookingToken = true;
+      //     }
+      //     f.write(s1);
+      //     if (s1 == '\n') {
+      //       lookingToken = false;
       //     }
       //   }
       // }
-      // if (lookingToken) {
-      //   f.writeln(s + inicio, str_len - inicio);
-      // }
+
+      char *s;
+      bool getline = false;
+      while ((s = i.getline(getline, str_len)) && getline) {
+        if (str_len == 0) {
+          continue;
+        }
+        bool lookingToken = false;
+        int inicio = 0;
+        for (unsigned pos = 0; pos < str_len; pos++) {
+          unsigned char c = normalize(s[pos]);
+          if (delim[c]) {
+            if (lookingToken) {
+              f.writeln(s + inicio, pos - inicio);
+              lookingToken = false;
+            }
+          } else {
+            if (!lookingToken) {
+              inicio = pos;
+              lookingToken = true;
+            }
+          }
+        }
+        if (lookingToken) {
+          f.writeln(s + inicio, str_len - inicio);
+        }
+      }
 
     } else {
 
-      bool lookingToken = false;
-      char s1;
-      while ((s1 = i.getc()) && s1 != (char)EOF) {
-
-        unsigned char c = s1;
-        if (delim[c]) {
-          if (lookingToken) {
-            f.write('\n');
-            lookingToken = false;
-          }
-        } else {
-          if (!lookingToken) {
-            lookingToken = true;
-          }
-          f.write(s1);
-          if (s1 == '\n') {
-            lookingToken = false;
-          }
-        }
-      }
-
       // bool lookingToken = false;
-      // int inicio = 0;
-      // for (unsigned pos = 0; pos < str_len; pos++) {
-      //   unsigned char c = s[pos];
+      // char s1;
+      // while ((s1 = i.getc()) && s1 != (char)EOF) {
+      //   unsigned char c = s1;
       //   if (delim[c]) {
       //     if (lookingToken) {
-      //       f.writeln(s + inicio, pos - inicio);
+      //       f.write('\n');
       //       lookingToken = false;
       //     }
       //   } else {
       //     if (!lookingToken) {
-      //       inicio = pos;
       //       lookingToken = true;
+      //     }
+      //     f.write(s1);
+      //     if (s1 == '\n') {
+      //       lookingToken = false;
       //     }
       //   }
       // }
-      // if (lookingToken) {
-      //   f.writeln(s + inicio, str_len - inicio);
-      // }
+
+      char *s;
+      bool getline = false;
+      while ((s = i.getline(getline, str_len)) && getline) {
+        if (str_len == 0) {
+          continue;
+        }
+        bool lookingToken = false;
+        int inicio = 0;
+        for (unsigned pos = 0; pos < str_len; pos++) {
+          unsigned char c = s[pos];
+          if (delim[c]) {
+            if (lookingToken) {
+              f.writeln(s + inicio, pos - inicio);
+              lookingToken = false;
+            }
+          } else {
+            if (!lookingToken) {
+              inicio = pos;
+              lookingToken = true;
+            }
+          }
+        }
+        if (lookingToken) {
+          f.writeln(s + inicio, str_len - inicio);
+        }
+      }
     }
   }
 
