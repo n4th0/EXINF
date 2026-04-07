@@ -1,29 +1,43 @@
+#include <iostream> 
+#include <string>
+#include <list> 
 #include "indexadorHash.h"
 #include "indexadorInformacion.h"
-// #include <chrono>
-#include <iostream>
-// #include <list>
-// #include <string>
-//
+
 using namespace std;
-// #include <chrono>
-// #include <iostream>
 
-#include <chrono>
-#include <iostream>
+int
+main(void)
+{
+IndexadorHash a("./StopWordsEspanyol.txt", ". ,:", false, false, "./indicePrueba", 0, true);
 
-int main() {
-  auto start = std::chrono::high_resolution_clock::now();
+string preg1;
+InformacionPregunta infPreg1;
+InformacionTerminoPregunta inf1;
 
-  auto end = std::chrono::high_resolution_clock::now();
+a.IndexarPregunta("pal1 yo pal2 pal1. pal3 el  ");
+a.IndexarPregunta("pal1 yo pal3 el  pal7");
 
-  IndexadorHash a("./StopWordsEspanyol.txt", ". ,:", false, false,
-                  "./indicePrueba", 0, true);
+if(a.DevuelvePregunta(preg1))
+	cout << "ESTA INDEXADA LA PREGUNTA: " << preg1 << endl;
+else
+	cout << "NO HAY INDEXADA NINGUNA PREGUNTA" << endl;
 
-  a.IndexarDirectorio("./test");
 
-  // a.ListarTerminos();
-  std::chrono::duration<double> duration = end - start;
+if(a.DevuelvePregunta("pal1", inf1))
+	cout << "pal1 SE HA INDEXADO EN LA PREGUNTA: " << inf1 << endl;
+else
+	cout << "pal1 NO SE HA INDEXADO EN LA PREGUNTA" << endl;
 
-  std::cout << "Tiempo: " << duration.count() << " segundos\n";
+if(a.DevuelvePregunta("pal7", inf1))
+	cout << "pal7 SE HA INDEXADO EN LA PREGUNTA: " << inf1 << endl;
+else
+	cout << "pal7 NO SE HA INDEXADO EN LA PREGUNTA" << endl;
+
+if(a.DevuelvePregunta(infPreg1))
+	cout << "ESTA INDEXADA LA PREGUNTA: " << infPreg1 << endl;
+else
+	cout << "NO HAY INDEXADA NINGUNA PREGUNTA" << endl;
+
+
 }

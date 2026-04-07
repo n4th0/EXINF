@@ -14,13 +14,13 @@ class IndexadorHash {
 
   inline friend ostream &operator<<(ostream &s, const IndexadorHash &p) {
     s << "Fichero con el listado de palabras de parada: " << p.ficheroStopWords
-      << endl;
-    s << "Tokenizador: " << p.tok << endl;
+      << '\n';
+    s << "Tokenizador: " << p.tok << '\n';
     s << "Directorio donde se almacenara el indice generado: "
-      << p.directorioIndice << endl;
-    s << "Stemmer utilizado: " << p.tipoStemmer << endl;
+      << p.directorioIndice << '\n';
+    s << "Stemmer utilizado: " << p.tipoStemmer << '\n';
     s << "Informacion de la coleccion indexada: " << p.informacionColeccionDocs
-      << endl;
+      << '\n';
     s << "Se almacenaran las posiciones de los terminos: "
       << p.almacenarPosTerm;
 
@@ -133,7 +133,7 @@ public:
     // A continuación aparecerá un listado del contenido del campo privado
     // "índice" donde para cada término indexado se imprimirá:
     // cout << termino << '\t' << InformacionTermino << endl;
-    cout << "Documentos indexados: " << endl;
+    cout << "Documentos indexados: " << '\n';
 
     ListarDocs();
     // A continuación aparecerá un listado del contenido del campo privado
@@ -182,8 +182,8 @@ public:
   }
 
   void ImprimirPregunta() {
-    cout << "Pregunta indexada: " << pregunta << endl;
-    cout << "Informacion de la pregunta: " << infPregunta << endl;
+    cout << "Pregunta indexada: " << pregunta << '\n';
+    cout << "Informacion de la pregunta: " << infPregunta << '\n';
   }
 
   bool Devuelve(const string &word, InformacionTermino &inf) const;

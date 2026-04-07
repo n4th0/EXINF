@@ -178,9 +178,8 @@ InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {
 InformacionTermino::InformacionTermino(const InformacionTermino &p)
     : ftc(p.ftc), l_docs(p.l_docs) {}
 
-unordered_map<int, InfTermDoc> InformacionTermino::getLdocs() const {
-  return this->l_docs;
-}
+// unordered_map<int, InfTermDoc> InformacionTermino::getLdocs() const { return
+// this->l_docs; }
 
 // class InformacionTermino {
 // InformacionTermino::InformacionTermino(const InformacionTermino &) {}
