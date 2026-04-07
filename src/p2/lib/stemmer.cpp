@@ -551,7 +551,8 @@ void stemmerPorter::stemmer(string &cad, const int &numero) {
   }
 }
 
-void stemmerPorter::stemmer(string &cad, const int &numero, string &cadF) {
+void stemmerPorter::stemmer(const string &cad, const int &numero,
+                            string &cadF) {
   // A  char cadena[1000];
 
   if (cad.size() >= GtamCadena) {

@@ -3,6 +3,7 @@
 #define _INDEX_HASH_
 #include "./indexadorInformacion.h"
 #include "./tokenizador.h"
+#include "stemmer.h"
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
@@ -11,7 +12,7 @@ using namespace std;
 
 class IndexadorHash {
 
-  friend ostream &operator<<(ostream &s, const IndexadorHash &p) {
+  inline friend ostream &operator<<(ostream &s, const IndexadorHash &p) {
     s << "Fichero con el listado de palabras de parada: " << p.ficheroStopWords
       << endl;
     s << "Tokenizador: " << p.tok << endl;
@@ -126,11 +127,15 @@ public:
   // vacía.
 
   void ImprimirIndexacion() const {
-    cout << "Terminos indexados: " << endl;
+    cout << "Terminos indexados: " << '\n';
+    ListarTerminos();
+
     // A continuación aparecerá un listado del contenido del campo privado
     // "índice" donde para cada término indexado se imprimirá:
     // cout << termino << '\t' << InformacionTermino << endl;
     cout << "Documentos indexados: " << endl;
+
+    ListarDocs();
     // A continuación aparecerá un listado del contenido del campo privado
     // "indiceDocs" donde para cada documento indexado se imprimirá: cout <<
     // nomDoc << '\t' << InfDoc << endl;
@@ -163,12 +168,17 @@ public:
   // devolvería "inf" vacío
 
   void ImprimirIndexacionPregunta() {
-    cout << "Pregunta indexada: " << pregunta << endl;
-    cout << "Terminos indexados en la pregunta: " << endl;
+    cout << "Pregunta indexada: " << pregunta << '\n';
+    cout << "Terminos indexados en la pregunta: " << '\n';
+
+    for (auto it = indicePregunta.begin(); it != indicePregunta.end(); it++) {
+      cout << (*it).first << '\t' << (*it).second << '\n';
+    }
+
     // A continuación aparecerá un listado del contenido de "indicePregunta"
     // donde para cada término indexado se imprimirá: cout << termino << '\t' <<
     // InformacionTerminoPregunta << endl;
-    cout << "Informacion de la pregunta: " << infPregunta << endl;
+    cout << "Informacion de la pregunta: " << infPregunta << '\n';
   }
 
   void ImprimirPregunta() {
@@ -327,5 +337,9 @@ private:
   bool almacenarPosTerm;
   // Si es true se almacenará la posición en la que aparecen los términos dentro
   // del documento en la clase InfTermDoc
+
+  string steam(const string &s) const;
+
+  bool IndexarFichero(const string &ficheroDocumentos);
 };
 #endif // !_INDEX_HASH_

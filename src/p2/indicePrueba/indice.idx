@@ -1,0 +1,17 @@
+TERM pal3
+ftc 1
+DOC 1 1 1 4
+END
+TERM pal2
+ftc 3
+DOC 2 2 2 0 2
+DOC 1 1 1 2
+END
+TERM pal4
+ftc 1
+DOC 2 1 1 3
+END
+TERM pal1
+ftc 2
+DOC 1 2 2 0 3
+END

@@ -1,26 +1,46 @@
 #ifndef _INFORMACION_
 #define _INFORMACION_
 
+// #include "../include/indexadorHash.h"
 #include <array>
 #include <iostream>
 #include <list>
 #include <unordered_map>
 
+#include <iostream>
+#include <stdexcept>
 using namespace std;
 
 class Fecha {
+  friend bool operator==(const Fecha &a, const Fecha &b);
+  friend bool operator<(const Fecha &a, const Fecha &b);
+  friend bool operator>(const Fecha &a, const Fecha &b);
+  friend bool operator<=(const Fecha &a, const Fecha &b);
+  friend bool operator>=(const Fecha &a, const Fecha &b);
+  friend bool operator!=(const Fecha &a, const Fecha &b);
+  friend std::ostream &operator<<(std::ostream &s, const Fecha &f);
+
 public:
   Fecha();
+  Fecha(int d, int m, int y);
   Fecha(Fecha &&) = default;
   Fecha(const Fecha &) = default;
   Fecha &operator=(Fecha &&) = default;
   Fecha &operator=(const Fecha &) = default;
   ~Fecha();
 
+  int getDay() const { return day; }
+  int getMonth() const { return month; }
+  int getYear() const { return year; }
+
+  void setDay(int d);
+  void setMonth(int m);
+  void setYear(int y);
+
 private:
   int day;
   int month;
-  int yea;
+  int year;
 };
 
 class InfTermDoc {
@@ -31,6 +51,17 @@ public:
   InfTermDoc();  // Inicializa ft = 0
   ~InfTermDoc(); // Pone ft = 0
   InfTermDoc &operator=(const InfTermDoc &);
+
+  // Getters
+  int getFt() const { return ft; }
+  const list<int> &getPosTerm() const { return posTerm; }
+
+  // Setters
+  void setFt(int f) { ft = f; }
+  void setPosTerm(const list<int> &p) { posTerm = p; }
+
+  void incFt() { ft++; }
+  void incPosTerm(int p) { posTerm.emplace_back(p); }
 
   // Añadir cuantos métodos se consideren necesarios para manejar la parte
   // privada de la clase
@@ -44,14 +75,6 @@ private:
   // ordenada de menor a mayor posición.
 };
 
-ostream &operator<<(ostream &s, const InfTermDoc &p) {
-  s << "ft: " << p.ft;
-  // A continuación se mostrarían todos los elementos de p.posTerm ("posicion
-  // TAB posicion TAB ... posicion, es decir nunca finalizará en un TAB"): s <<
-  // "\t" << posicion;
-  return s;
-}
-
 class InformacionTermino {
   friend ostream &operator<<(ostream &s, const InformacionTermino &p);
 
@@ -60,7 +83,18 @@ public:
   InformacionTermino();  // Inicializa ftc = 0
   ~InformacionTermino(); // Pone ftc = 0 y vacía l_docs
   InformacionTermino &operator=(const InformacionTermino &);
+  unordered_map<int, InfTermDoc> getLdocs() const;
 
+  // Getters
+  int getFtc() const { return ftc; }
+  const unordered_map<int, InfTermDoc> &getL_docs() const { return l_docs; }
+
+  // Setters
+  void setFtc(int f) { ftc = f; }
+  void setL_docs(const unordered_map<int, InfTermDoc> &l) { l_docs = l; }
+
+  void incFtc() { ftc++; }
+  void addL_docs(int a, InfTermDoc l) { l_docs[a] = l; }
   // Añadir cuantos métodos se consideren necesarios para manejar la parte
   // privada de la clase
 private:
@@ -71,21 +105,37 @@ private:
   // término en el documento
 };
 
-ostream &operator<<(ostream &s, const InformacionTermino &p) {
-  s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs.size();
-  // A continuación se mostrarían todos los elementos de p.l_docs: s <<
-  // "\tId.Doc: " << idDoc << "\t" << InfTermDoc;
-  return s;
-}
-
 class InfDoc {
   friend ostream &operator<<(ostream &s, const InfDoc &p);
 
 public:
   InfDoc(const InfDoc &);
+  InfDoc(const string &);
   InfDoc();
   ~InfDoc();
   InfDoc &operator=(const InfDoc &);
+
+  int getidDoc() const;
+
+  // Getters
+  int getNumPal() const { return numPal; }
+  int getNumPalSinParada() const { return numPalSinParada; }
+  int getNumPalDiferentes() const { return numPalDiferentes; }
+  int getTamBytes() const { return tamBytes; }
+  const Fecha &getFechaModificacion() const { return fechaModificacion; }
+
+  // Setters
+  void setIdDoc(int id) { idDoc = id; }
+  void setNumPal(int n) { numPal = n; }
+  void setNumPalSinParada(int n) { numPalSinParada = n; }
+  void setNumPalDiferentes(int n) { numPalDiferentes = n; }
+
+  void incNumPal() { numPal++; }
+  void incNumPalSinParada() { numPalSinParada++; }
+  void incNumPalDiferentes() { numPalDiferentes++; }
+
+  void setTamBytes(int t) { tamBytes = t; }
+  void setFechaModificacion(const Fecha &f) { fechaModificacion = f; }
 
   // Añadir cuantos métodos se consideren necesarios para manejar la parte
   // privada de la clase
@@ -104,14 +154,6 @@ private:
   // documento. El tipo "Fecha/hora" lo elegirá/implementará el alumno
 };
 
-ostream &operator<<(ostream &s, const InfDoc &p) {
-  s << "idDoc: " << p.idDoc << "\tnumPal: " << p.numPal
-    << "\tnumPalSinParada: " << p.numPalSinParada
-    << "\tnumPalDiferentes: " << p.numPalDiferentes
-    << "\ttamBytes: " << p.tamBytes;
-  return s;
-}
-
 class InfColeccionDocs {
   friend ostream &operator<<(ostream &s, const InfColeccionDocs &p);
 
@@ -120,6 +162,20 @@ public:
   InfColeccionDocs();
   ~InfColeccionDocs();
   InfColeccionDocs &operator=(const InfColeccionDocs &);
+
+  // Getters
+  int getNumDocs() const { return numDocs; }
+  int getNumTotalPal() const { return numTotalPal; }
+  int getNumTotalPalSinParada() const { return numTotalPalSinParada; }
+  int getNumTotalPalDiferentes() const { return numTotalPalDiferentes; }
+  int getTamBytes() const { return tamBytes; }
+
+  // Setters
+  void setNumDocs(int n) { numDocs = n; }
+  void setNumTotalPal(int n) { numTotalPal = n; }
+  void setNumTotalPalSinParada(int n) { numTotalPalSinParada = n; }
+  void setNumTotalPalDiferentes(int n) { numTotalPalDiferentes = n; }
+  void setTamBytes(int t) { tamBytes = t; }
 
   // Añadir cuantos métodos se consideren necesarios para manejar la parte
   // privada de la clase
@@ -135,14 +191,6 @@ private:
   int tamBytes; // Tamaño total en bytes de la colección
 };
 
-ostream &operator<<(ostream &s, const InfColeccionDocs &p) {
-  s << "numDocs: " << p.numDocs << "\tnumTotalPal: " << p.numTotalPal
-    << "\tnumTotalPalSinParada: " << p.numTotalPalSinParada
-    << "\tnumTotalPalDiferentes: " << p.numTotalPalDiferentes
-    << "\ttamBytes: " << p.tamBytes;
-  return s;
-}
-
 class InformacionTerminoPregunta {
   friend ostream &operator<<(ostream &s, const InformacionTerminoPregunta &p);
 
@@ -151,6 +199,16 @@ public:
   InformacionTerminoPregunta();
   ~InformacionTerminoPregunta();
   InformacionTerminoPregunta &operator=(const InformacionTerminoPregunta &);
+
+  // Getters
+  int getFt() const { return ft; }
+  const list<int> &getPosTerm() const { return posTerm; }
+
+  // Setters
+  void setFt(int f) { ft = f; }
+  void incFt() { ft++; }
+  void setPosTerm(const list<int> &p) { posTerm = p; }
+  void addPosTerm(int pos) { posTerm.emplace_back(pos); }
 
   // Añadir cuantos métodos se consideren necesarios para manejar la parte
   // privada de la clase
@@ -164,14 +222,6 @@ private:
   // Estará ordenada de menor a mayor posición.
 };
 
-ostream &operator<<(ostream &s, const InformacionTerminoPregunta &p) {
-  s << "ft: " << p.ft;
-  // A continuación se mostrarían todos los elementos de p.posTerm ("posicion
-  // TAB posicion TAB ... posicion, es decir nunca finalizará en un TAB"): s <<
-  // "\t" << posicion;
-  return s;
-}
-
 class InformacionPregunta {
   friend ostream &operator<<(ostream &s, const InformacionPregunta &p);
 
@@ -180,6 +230,16 @@ public:
   InformacionPregunta();
   ~InformacionPregunta();
   InformacionPregunta &operator=(const InformacionPregunta &);
+
+  // Getters
+  int getNumTotalPal() const { return numTotalPal; }
+  int getNumTotalPalSinParada() const { return numTotalPalSinParada; }
+  int getNumTotalPalDiferentes() const { return numTotalPalDiferentes; }
+
+  // Setters
+  void setNumTotalPal(int n) { numTotalPal = n; }
+  void setNumTotalPalSinParada(int n) { numTotalPalSinParada = n; }
+  void setNumTotalPalDiferentes(int n) { numTotalPalDiferentes = n; }
 
   // Añadir cuantos métodos se consideren necesarios para manejar la parte
   // privada de la clase
@@ -192,13 +252,5 @@ private:
   // Nº total de palabras diferentes en la pregunta que no sean stop-words (sin
   // acumular la frecuencia de cada una de ellas)
 };
-
-ostream &operator<<(ostream &s, const InformacionPregunta &p) {
-  s << "numTotalPal: " << p.numTotalPal
-    << "\tnumTotalPalSinParada: " << p.numTotalPalSinParada
-    << "\tnumTotalPalDiferentes: " << p.numTotalPalDiferentes;
-
-  return s;
-}
 
 #endif // !
