@@ -790,12 +790,15 @@ corresponden
 con
 muy
 frecuente
-1/10
+1
+10
 frecuente
 poco
 frecuente
-1/1.000
-1/100
+1
+1.000
+1
+100
 raras
 muy
 raras
@@ -891,7 +894,7 @@ superior
 a
 5000
 mg
-/kg
+kg
 de
 peso
 corporal
@@ -1172,7 +1175,8 @@ en
 plasma
 de
 0,54
-ng/ml
+ng
+ml
 y
 las
 concentraciones
@@ -1242,7 +1246,8 @@ pico
 plasmatico
 de
 1,34
-ng/ml
+ng
+ml
 la
 recuperacion
 media
@@ -1308,7 +1313,8 @@ entre
 1
 y
 3
-ng/ml
+ng
+ml
 tras
 la
 absorcion
@@ -1728,7 +1734,6 @@ de
 la
 primera
 autorizacion
-/
 renovacion
 de
 la

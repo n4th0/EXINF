@@ -179,7 +179,8 @@ insuficiencia
 renal
 vfg
 50
-ml/min
+ml
+min
 la
 dosis
 inicial
@@ -333,7 +334,8 @@ insuficiencia
 renal
 vfg
 50
-ml/min
+ml
+min
 en
 pacientes
 con
@@ -880,8 +882,10 @@ de
 frecuencia
 palpitaciones
 frecuentes
-1/100
-1/10
+1
+100
+1
+10
 trastornos
 de
 la
@@ -895,8 +899,10 @@ cardiacas
 por
 ejemplo
 raras
-1/10.000
-1/1.000
+1
+10.000
+1
+1.000
 alteraciones
 del
 sueño
@@ -1608,7 +1614,8 @@ envasados
 en
 blisters
 de
-pvc/aluminio
+pvc
+aluminio
 7
 titular
 de
@@ -1619,7 +1626,7 @@ comercializacion
 laboratorio
 epsilon
 s.a
-c/
+c
 serrano
 galvache
 56
@@ -1642,14 +1649,12 @@ de
 la
 primera
 autorizacion
-/
 renovacion
 de
 la
 autorizacion
 junio
 1993
-/
 junio
 2003
 10
@@ -1665,7 +1670,6 @@ marzo
 ii
 subtipo
 102
-/
 1.febrero.05
 cds
 prospectos

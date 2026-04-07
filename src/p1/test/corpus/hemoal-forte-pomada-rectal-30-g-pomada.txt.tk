@@ -576,7 +576,8 @@ caracteristicas
 son
 muy
 raramente
-1/10.000
+1
+10.000
 se
 podran
 presentar
@@ -609,8 +610,10 @@ trastornos
 cardiacos
 palpitaciones
 raramente
-1/10.000
-1/1000
+1
+10.000
+1
+1000
 se
 pueden
 presentar
@@ -788,7 +791,7 @@ razon
 de
 0,1
 ml
-/kg
+kg
 de
 peso
 durante
@@ -1095,7 +1098,8 @@ via
 oral
 es
 600
-mg/kg
+mg
+kg
 la
 dl50
 de
@@ -1107,7 +1111,8 @@ en
 raton
 es
 216
-mg/kg
+mg
+kg
 un
 preparado
 rectal
@@ -1292,7 +1297,7 @@ comercializacion
 combe
 europa
 s.a
-c/
+c
 orense
 58
 28020

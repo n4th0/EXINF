@@ -1249,8 +1249,10 @@ de
 comprimidos
 debe
 tomar
-el/los
-comprimido/s
+el
+los
+comprimido
+s
 adicionales
 necesarios
 de
@@ -1599,7 +1601,8 @@ si
 algunos
 de
 los
-procesos/factores
+procesos
+factores
 de
 riesgo
 que
@@ -1771,8 +1774,10 @@ se
 estima
 en
 60
-casos/10000
-embarazos/año
+casos
+10000
+embarazos
+año
 el
 tev
 tiene
@@ -1844,7 +1849,8 @@ arterial
 pueden
 incluir
 dolor
-y/o
+y
+o
 inflamacion
 en
 una
@@ -1941,7 +1947,8 @@ en
 un
 hermano
 o
-padre/s
+padre
+s
 en
 edad
 relativamente
@@ -1984,7 +1991,8 @@ corporal
 mayor
 de
 30
-kg/m2
+kg
+m2
 inmovilizacion
 prolongada
 cirugia
@@ -2099,7 +2107,8 @@ corporal
 mayor
 de
 30
-kg/m2
+kg
+m2
 hipertension
 arterial
 fibrilacion
@@ -2316,8 +2325,8 @@ incremento
 del
 riesgo
 relativo
-rr
-1,24
+rr=1
+24
 de
 presentar
 cancer
@@ -2870,7 +2879,8 @@ uso
 de
 aco
 ictericia
-y/o
+y
+o
 prurito
 relacionados
 con
@@ -3518,7 +3528,8 @@ a
 hemorragia
 por
 disrupcion
-y/o
+y
+o
 fallo
 de
 la
@@ -4155,7 +4166,8 @@ de
 corticosteroides
 y
 fracciones
-lipidicas/lipoproteicas
+lipidicas
+lipoproteicas
 ·
 parametros
 del
@@ -4396,7 +4408,8 @@ cantidades
 de
 anticonceptivos
 orales
-y/o
+y
+o
 sus
 metabolitos
 pero
@@ -4552,7 +4565,8 @@ sistema
 inmune
 raras
 reacciones
-anafilacticas/anafilactoides
+anafilacticas
+anafilactoides
 incluyendo
 casos
 muy
@@ -5093,7 +5107,8 @@ plasmaticas
 maximas
 de
 7
-ng/ml
+ng
+ml
 la
 biodisponibilidad
 de
@@ -5243,7 +5258,8 @@ es
 de
 aproximadamente
 67
-ml/min
+ml
+min
 eliminacion
 los
 niveles
@@ -5362,7 +5378,8 @@ aclaramiento
 de
 aproximadamente
 18
-ml/min
+ml
+min
 en
 estado
 de
@@ -5388,7 +5405,8 @@ maximas
 de
 aproximadamente
 156
-pg/ml
+pg
+ml
 en
 1,5
 horas
@@ -5461,7 +5479,8 @@ de
 aproximadamente
 2,8
 8,6
-l/kg
+l
+kg
 metabolismo
 etinilestradiol
 sufre
@@ -5516,7 +5535,9 @@ aclaramiento
 de
 2,3
 7
-ml/min/kg
+ml
+min
+kg
 eliminacion
 los
 niveles
@@ -5765,7 +5786,6 @@ comprimidos
 instrucciones
 de
 uso
-/
 manipulacion
 mantener
 fuera
@@ -5813,7 +5833,6 @@ de
 la
 primera
 autorizacion
-/
 renovacion
 de
 la

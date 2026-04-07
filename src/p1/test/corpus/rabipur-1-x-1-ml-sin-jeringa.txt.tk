@@ -30,7 +30,8 @@ del
 medicamento
 rabipur®
 2,5
-ui/ml
+ui
+ml
 polvo
 y
 disolvente
@@ -156,7 +157,8 @@ cuenta
 las
 directrices
 nacionales
-y/o
+y
+o
 de
 la
 oms
@@ -305,7 +307,8 @@ presencia
 de
 anticuerpos
 0,5
-ui/ml
+ui
+ml
 mediante
 la
 prueba
@@ -448,7 +451,8 @@ es
 inferior
 a
 0,5
-ui/ml
+ui
+ml
 ·
 alternativamente
 en
@@ -750,7 +754,8 @@ en
 caso
 de
 incertidumbre
-y/o
+y
+o
 exposicion
 en
 una
@@ -1162,7 +1167,8 @@ pacientes
 con
 heridas
 multiples
-y/o
+y
+o
 heridas
 craneofaciales
 o
@@ -1329,7 +1335,8 @@ titulo
 inferior
 a
 0,5
-ui/ml
+ui
+ml
 deben
 recibir
 otras
@@ -1949,7 +1956,8 @@ consultese
 la
 ficha
 tecnica
-y/o
+y
+o
 el
 prospecto
 de
@@ -2175,7 +2183,8 @@ posible
 riesgo
 en
 el
-feto/lactante
+feto
+lactante
 4.7
 efectos
 sobre
@@ -2279,7 +2288,8 @@ en
 los
 ensayos
 clinicos
-y/o
+y
+o
 durante
 el
 periodo
@@ -2304,7 +2314,8 @@ administracion
 frecuente
 trastornos
 cardiacos
-1/10.000
+1
+10.000
 trastornos
 del
 sistema
@@ -2312,8 +2323,10 @@ fecuente
 sanguineo
 y
 linfatico
-1/100
-1/10
+1
+100
+1
+10
 trastornos
 del
 oido
@@ -2322,7 +2335,8 @@ del
 muy
 raro
 laberinto
-1/10.000
+1
+10.000
 trastornos
 oculares
 alteracion
@@ -2457,7 +2471,8 @@ protector
 de
 anticuerpos
 0,5
-ui/ml
+ui
+ml
 hacia
 el
 dia
@@ -2502,7 +2517,8 @@ por
 encima
 de
 0,5
-ui/ml
+ui
+ml
 no
 obstante
 en
@@ -2608,6 +2624,7 @@ un
 numero
 limitado
 n
+=
 28
 de
 sujetos
@@ -2660,7 +2677,8 @@ indujo
 anticuerpos
 neutralizantes
 0,5
-ui/ml
+ui
+ml
 en
 el
 98%
@@ -2909,7 +2927,8 @@ envase
 6.6
 instrucciones
 de
-uso/manipulacion
+uso
+manipulacion
 la
 vacuna
 debe
@@ -2926,7 +2945,8 @@ detectar
 cualquier
 particula
 extraña
-y/o
+y
+o
 modificacion
 del
 aspecto
@@ -3031,7 +3051,8 @@ fecha
 de
 la
 primera
-aprobacion/renovacion
+aprobacion
+renovacion
 de
 la
 autorizacion

@@ -488,7 +488,8 @@ renal
 grave
 gfr
 30
-ml/min
+ml
+min
 bloqueo
 auriculoventricular
 de
@@ -1306,7 +1307,6 @@ derivado
 de
 1,4
 dihidropiridina
-/
 antagonista
 del
 calcio
@@ -1479,7 +1479,8 @@ posee
 un
 debil
 efecto
-natriuretico/diuretico
+natriuretico
+diuretico
 y
 no
 produce
@@ -1608,7 +1609,8 @@ es
 de
 aproximadamente
 10
-l/kg
+l
+kg
 en
 el
 estado
@@ -1707,7 +1709,8 @@ plasmatico
 es
 de
 1100
-ml/l
+ml
+l
 y
 depende
 del
@@ -1994,7 +1997,10 @@ del
 recipiente
 blister
 de
-pvc/pe/pvdc/al
+pvc
+pe
+pvdc
+al
 envases
 de
 20
@@ -2021,7 +2027,8 @@ de
 comprimidos
 instrucciones
 de
-uso/manipulacion
+uso
+manipulacion
 no
 requiere
 instrucciones
@@ -2062,7 +2069,8 @@ fecha
 de
 la
 primera
-autorizacion/revalidacion
+autorizacion
+revalidacion
 de
 la
 autorizacion

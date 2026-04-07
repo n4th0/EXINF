@@ -1,6 +1,7 @@
 salbutamol
 clickhaler
-114mcg/inhalacion
+114mcg
+inhalacion
 20
 informacion
 basica
@@ -1635,7 +1636,8 @@ salbutamol
 es
 de
 30
-litros/hora
+litros
+hora
 el
 salbutamol
 se
@@ -1892,11 +1894,14 @@ fecha
 de
 la
 primera
-autorizacion/renovacion
+autorizacion
+renovacion
 de
 la
 autorizacion
-06/04/2000
+06
+04
+2000
 10
 fecha
 de

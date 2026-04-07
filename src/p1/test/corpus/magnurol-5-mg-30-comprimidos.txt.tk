@@ -448,7 +448,8 @@ frecuencia
 cardiaca
 de
 120-160
-latidos/minuto
+latidos
+minuto
 el
 episodio
 sincopal
@@ -864,7 +865,8 @@ la
 dosis
 del
 antihipertensivo
-y/o
+y
+o
 ajustar
 la
 dosis
@@ -957,7 +959,8 @@ la
 dosis
 del
 antihipertensivo
-y/o
+y
+o
 un
 ajuste
 de
@@ -1130,7 +1133,7 @@ nauseas
 4
 4%
 trastornos
-metabolicos/
+metabolicos
 nutricionales
 edema
 0
@@ -1200,8 +1203,7 @@ estadisticamente
 significativo
 al
 nivel
-p
-0
+p=0
 05
 de
 todas
@@ -1296,7 +1298,7 @@ nauseas
 1
 7%
 trastornos
-metabolicos/
+metabolicos
 nutricionales
 edema
 periferico
@@ -1330,12 +1332,14 @@ disnea
 1
 7%
 congestion
-nasal/rinitis
+nasal
+rinitis
 1
 9%
 sentidos
 vision
-borrosa/ambliopia
+borrosa
+ambliopia
 1
 3%
 sistema
@@ -1688,7 +1692,8 @@ densidad
 y
 del
 indice
-hdl/ldl
+hdl
+ldl
 ademas
 hay
 un

@@ -1194,7 +1194,6 @@ de
 la
 primera
 autorizacion
-/
 renovacion
 de
 la
@@ -1243,7 +1242,8 @@ unidad
 de
 actividad
 administrada
-microgy/mbq
+microgy
+mbq
 para
 los
 pacientes
@@ -1273,9 +1273,11 @@ de
 la
 prueba
 organo
-microgy/mbq
+microgy
+mbq
 organo
-microgy/mbq
+microgy
+mbq
 vejiga
 120
 superficies
@@ -1396,8 +1398,10 @@ efectiva
 dosis
 efectiva
 81
-microsv/mbq
-microsv/mbq
+microsv
+mbq
+microsv
+mbq
 international
 commission
 on

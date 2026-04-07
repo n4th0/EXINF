@@ -23,7 +23,6 @@ medicamento
 yira
 0,03
 mg
-/
 3
 mg
 comprimidos
@@ -1232,8 +1231,10 @@ toma
 de
 comprimidos
 tomara
-el/los
-comprimido/s
+el
+los
+comprimido
+s
 extra
 de
 otro
@@ -1956,7 +1957,8 @@ trombosis
 venosa
 o
 arterial
-trombotica/tromboembolica
+trombotica
+tromboembolica
 o
 de
 un
@@ -1966,7 +1968,8 @@ pueden
 ser
 ·
 dolor
-y/o
+y
+o
 inflamacion
 inusual
 y
@@ -2204,7 +2207,8 @@ corporal
 superior
 a
 30
-kg/m²
+kg
+m²
 ·
 no
 hay
@@ -2295,7 +2299,8 @@ corporal
 superior
 a
 30
-kg/m²
+kg
+m²
 ·
 los
 antecedentes
@@ -2612,6 +2617,7 @@ del
 riesgo
 relativo
 rr
+=
 1,24
 de
 que
@@ -3120,7 +3126,8 @@ uso
 de
 aoc
 ictericia
-y/o
+y
+o
 prurito
 relacionados
 con
@@ -3195,7 +3202,8 @@ de
 una
 ictericia
 colestasica
-y/o
+y
+o
 de
 un
 prurito
@@ -4272,7 +4280,8 @@ y
 las
 fracciones
 de
-lipidos/lipoproteinas
+lipidos
+lipoproteinas
 los
 parametros
 del
@@ -4554,7 +4563,8 @@ cantidades
 de
 esteroides
 anticonceptivos
-y/o
+y
+o
 de
 sus
 metabolitos
@@ -5127,7 +5137,8 @@ activo
 de
 aproximadamente
 38
-ng/ml
+ng
+ml
 la
 biodisponibilidad
 es
@@ -5247,7 +5258,8 @@ de
 3,7
 ±
 1,2
-l/kg
+l
+kg
 metabolismo
 la
 drospirenona
@@ -5347,7 +5359,9 @@ de
 1,5
 ±
 0,2
-ml/min/kg
+ml
+min
+kg
 la
 drospirenona
 se
@@ -5419,7 +5433,8 @@ equilibrio
 de
 unos
 70
-ng/ml
+ng
+ml
 despues
 de
 alrededor
@@ -5482,7 +5497,8 @@ cr
 50
 ­
 80
-ml/min
+ml
+min
 fueron
 comparables
 con
@@ -5518,7 +5534,8 @@ cr
 30
 ­
 50
-ml/min
+ml
+min
 comparados
 con
 aquellos
@@ -5577,7 +5594,8 @@ unica
 el
 aclaramiento
 oral
-cl/f
+cl
+f
 disminuyo
 aproximadamente
 un
@@ -5731,7 +5749,8 @@ plasmaticas
 maximas
 de
 100
-pg/ml
+pg
+ml
 al
 cabo
 de
@@ -5777,7 +5796,8 @@ distribucion
 aparente
 de
 5
-l/kg
+l
+kg
 y
 se
 une
@@ -5817,11 +5837,13 @@ shbg
 aumenta
 de
 70
-nmol/l
+nmol
+l
 a
 unos
 350
-nmol/l
+nmol
+l
 el
 etinilestradiol
 pasa
@@ -5847,7 +5869,9 @@ aclaramiento
 plasmatico
 metabolico
 5
-ml/min/kg
+ml
+min
+kg
 eliminacion
 el
 etinilestradiol
@@ -6086,7 +6110,8 @@ envase
 envase
 blister
 de
-pvc/aluminio
+pvc
+aluminio
 presentaciones
 envase
 calendario

@@ -1,6 +1,7 @@
 sandostatin
 0,5
-mg/ml
+mg
+ml
 solucion
 inyectable
 5
@@ -20,7 +21,8 @@ del
 medicamento
 sandostatin
 0,5
-mg/ml
+mg
+ml
 solucion
 inyectable
 2
@@ -436,7 +438,8 @@ varices
 gastro-esofagicas
 sangrantes
 25
-microgramos/hora
+microgramos
+hora
 durante
 5
 dias
@@ -470,7 +473,8 @@ dosis
 de
 hasta
 50
-microgramos/hora
+microgramos
+hora
 durante
 5
 dias
@@ -496,7 +500,8 @@ de
 0,025
 a
 0,05
-mg/hora
+mg
+hora
 ministerio
 los
 pacientes
@@ -1599,7 +1604,8 @@ dosis
 maxima
 de
 1
-mg/kg
+mg
+kg
 al
 dia
 por
@@ -1614,7 +1620,8 @@ dosis
 maxima
 de
 0,5
-mg/kg
+mg
+kg
 al
 dia
 por
@@ -1714,7 +1721,8 @@ de
 hormona
 del
 crecimiento
-y/o
+y
+o
 de
 somatomedina-c
 una
@@ -1740,7 +1748,8 @@ normalizacion
 gh
 plasmatica
 5
-ng/ml
+ng
+ml
 puede
 obtenerse
 en
@@ -2185,7 +2194,8 @@ de
 la
 mejoria
 sintomatica
-gastrinomas/sindrome
+gastrinomas
+sindrome
 de
 zollinger-ellison
 aunque
@@ -2598,7 +2608,8 @@ distribucion
 es
 de
 0,27
-l/kg
+l
+kg
 de
 peso
 corporal
@@ -2610,7 +2621,8 @@ total
 es
 de
 160
-ml/min
+ml
+min
 la
 union
 a
@@ -2653,14 +2665,16 @@ de
 dl50
 de
 72
-mg/kg
+mg
+kg
 por
 via
 intravenosa
 y
 de
 470
-mg/kg
+mg
+kg
 por
 via
 subcutanea
@@ -2674,7 +2688,8 @@ fue
 determinado
 a
 18
-mg/kg
+mg
+kg
 acetato
 octreotida
 fue
@@ -2686,7 +2701,8 @@ que
 recibieron
 hasta
 1
-mg/kg
+mg
+kg
 de
 peso
 corporal
@@ -2718,7 +2734,8 @@ dosis
 de
 hasta
 0,5
-mg/kg
+mg
+kg
 dos
 veces
 al
@@ -2774,7 +2791,8 @@ recibian
 dosis
 de
 0,5
-mg/kg
+mg
+kg
 dos
 veces
 al
@@ -2853,7 +2871,8 @@ al
 %
 mutagenicidad
 octreotida
-y/o
+y
+o
 sus
 metabolitos
 no
@@ -2978,7 +2997,7 @@ bateria
 in
 vitro
 validado
-cancerogenesis/
+cancerogenesis
 toxicidad
 cronica
 en
@@ -2995,7 +3014,8 @@ diarias
 de
 hasta
 1,25
-mg/kg
+mg
+kg
 de
 peso
 corporal
@@ -3022,7 +3042,8 @@ las
 52
 104
 y
-113/116
+113
+116
 semanas
 tambien
 aparecieron
@@ -3062,7 +3083,8 @@ vehiculo
 acido
 de
 acido
-lactico/manitol
+lactico
+manitol
 esta
 reaccion
 del
@@ -3091,7 +3113,8 @@ de
 octreotida
 hasta
 2
-mg/kg
+mg
+kg
 durante
 98
 semanas
@@ -3137,7 +3160,8 @@ mas
 alta
 de
 1,25
-mg/kg
+mg
+kg
 por
 dia
 este
@@ -3249,7 +3273,8 @@ subcutaneas
 de
 hasta
 1
-mg/kg
+mg
+kg
 de
 peso
 corporal
@@ -3294,7 +3319,8 @@ de
 excipientes
 ampolla
 0,5
-mg/ml
+mg
+ml
 acido
 lactico
 manitol
@@ -3368,7 +3394,8 @@ con
 ampollas
 de
 0,5
-mg/ml
+mg
+ml
 6.6
 instrucciones
 de
@@ -3433,7 +3460,8 @@ fecha
 de
 la
 primera
-autorizacion/renovacion
+autorizacion
+renovacion
 de
 la
 autorizacion

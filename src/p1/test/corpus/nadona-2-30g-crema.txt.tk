@@ -1020,7 +1020,9 @@ piel
 0,55
 ±
 0,13
-g/cm2/h
+g
+cm2
+h
 y
 su
 rapida
@@ -1208,7 +1210,8 @@ crema
 f
 instrucciones
 de
-uso/manipulacion
+uso
+manipulacion
 desenroscar
 el
 tapon
@@ -1253,7 +1256,7 @@ autorizacion
 laboratorios
 medea
 s.a
-c/
+c
 gran
 capita
 10

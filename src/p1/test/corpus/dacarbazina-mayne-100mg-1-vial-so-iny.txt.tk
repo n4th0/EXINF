@@ -150,7 +150,8 @@ de
 200
 a
 250
-mg/m2
+mg
+m2
 de
 area
 de
@@ -193,7 +194,8 @@ tambien
 puede
 administrarse
 850
-mg/m2
+mg
+m2
 de
 area
 de
@@ -225,7 +227,8 @@ diaria
 intravenosa
 de
 375
-mg/m2
+mg
+m2
 de
 area
 de
@@ -277,7 +280,8 @@ intravenosas
 diarias
 de
 250
-mg/m2
+mg
+m2
 de
 area
 de
@@ -513,7 +517,8 @@ paciente
 pacientes
 con
 insuficiencia
-hepatica/renal
+hepatica
+renal
 si
 solo
 hay
@@ -680,7 +685,8 @@ el
 equivalente
 a
 10
-mg/ml
+mg
+ml
 de
 dacarbazina
 y
@@ -755,7 +761,8 @@ dosis
 de
 hasta
 200
-mg/m2
+mg
+m2
 en
 forma
 de
@@ -771,7 +778,8 @@ entre
 200
 y
 850
-mg/m2
+mg
+m2
 deberan
 administrarse
 como
@@ -2500,7 +2508,6 @@ soluciones
 concentradas
 25
 mg
-/
 ml
 la
 dacarbazina
@@ -3057,13 +3064,15 @@ autorizacion
 de
 comercializacion
 pl
-04515/0091
+04515
+0091
 9
 fecha
 de
 la
 primera
-autorizacion/renovacion
+autorizacion
+renovacion
 de
 la
 agosto

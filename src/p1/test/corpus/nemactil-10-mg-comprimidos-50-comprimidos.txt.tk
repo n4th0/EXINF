@@ -53,6 +53,7 @@ al
 4%
 1
 gota
+=
 1
 mg
 de
@@ -164,10 +165,12 @@ del
 comportamiento
 adultos
 10-60
-mg/dia
+mg
+dia
 ancianos
 5-15
-mg/dia
+mg
+dia
 niños
 1
 mg
@@ -179,7 +182,8 @@ edad
 neurosis
 adulto
 50-250
-mg/dia
+mg
+dia
 ·
 psicosis
 adulto
@@ -424,7 +428,8 @@ hipotension
 ·
 insuficiencia
 renal
-y/o
+y
+o
 hepatica
 riesgo
 de
@@ -709,7 +714,8 @@ gotas
 contiene
 ademas
 250
-mg/ml
+mg
+ml
 de
 sacarosa
 lo
@@ -1881,7 +1887,8 @@ fecha
 de
 la
 primera
-autorizacion/renovacion
+autorizacion
+renovacion
 de
 la
 autorizacion

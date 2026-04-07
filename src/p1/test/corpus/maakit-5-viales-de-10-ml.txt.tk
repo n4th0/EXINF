@@ -65,7 +65,7 @@ de
 seroalbumina
 humana
 2
-mg/
+mg
 vial
 el
 nº
@@ -76,7 +76,7 @@ de
 3,825
 5,175
 x
-106/
+106
 vial
 tamaño
 90
@@ -217,6 +217,7 @@ kg
 dosis
 pediatrica
 mbq
+=
 a
 pesar
 de
@@ -256,6 +257,7 @@ dosis
 pedia
 trica
 mbq
+=
 4.3
 contraindicaciones
 hipersensibilidad
@@ -577,7 +579,8 @@ plasma
 los
 procedimientos
 de
-inactivacion/eliminacion
+inactivacion
+eliminacion
 incluidos
 en
 el
@@ -605,7 +608,8 @@ vhb
 los
 procedimientos
 de
-inactivacion/eliminacion
+inactivacion
+eliminacion
 pueden
 tener
 un
@@ -1233,7 +1237,8 @@ efectos
 farmacodinamicos
 detectables
 clinica
-y/o
+y
+o
 analiticamente
 5.2
 propiedades
@@ -1574,7 +1579,8 @@ de
 20
 a
 25
-mg/kg
+mg
+kg
 de
 peso
 corporal
@@ -1647,7 +1653,8 @@ por
 debajo
 de
 10
-mg/kg
+mg
+kg
 mientras
 que
 suspensiones
@@ -1672,12 +1679,14 @@ la
 dosis
 excede
 5
-mg/kg
+mg
+kg
 las
 dosis
 de
 20-50
-mg/kg
+mg
+kg
 causan
 muerte
 subita
@@ -2062,7 +2071,8 @@ tejidos
 dosis
 equivalente
 efectiva
-msv/mbq
+msv
+mbq
 para
 una
 actividad
@@ -2260,7 +2270,9 @@ plastico
 6.6
 instrucciones
 de
-uso/manipulacion/eliminacion
+uso
+manipulacion
+eliminacion
 metodo
 de
 preparacion
@@ -2581,7 +2593,8 @@ solucion
 al
 0,9
 %
-m/v
+m
+v
 de
 cloruro
 sodico
@@ -2712,7 +2725,8 @@ comercializacion
 9
 fecha
 de
-aprobacion/renovacion
+aprobacion
+renovacion
 de
 la
 autorizacion

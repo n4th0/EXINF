@@ -1,6 +1,7 @@
 baricol
 1,05
-g/ml
+g
+ml
 suspension
 rectal
 600
@@ -20,7 +21,8 @@ del
 medicamento
 baricol
 1,05
-g/ml
+g
+ml
 suspension
 rectal
 2
@@ -32,7 +34,8 @@ sulfato
 de
 bario
 1,05
-g/ml
+g
+ml
 lista
 de
 excipientes
@@ -342,7 +345,8 @@ una
 valoracion
 meticulosa
 del
-beneficio/riesgo
+beneficio
+riesgo
 en
 los
 pacientes
@@ -662,7 +666,7 @@ puede
 producirse
 estreñimiento
 1
-/500.000
+500.000
 raramente
 se
 han
@@ -696,7 +700,7 @@ anafilactico
 erupciones
 cutaneas
 1
-/250.000
+250.000
 ministerio
 durante
 un
@@ -1206,7 +1210,8 @@ del
 texto
 baricol
 1,05
-g/ml
+g
+ml
 suspension
 rectal
 1900ml

@@ -55,10 +55,12 @@ extraccion
 etanol
 60
 %
-p/p
+p
+p
 relacion
 fruto
-seco/extracto
+seco
+extracto
 7
 ­
 13
@@ -558,7 +560,8 @@ capsulas
 6.6
 instrucciones
 de
-uso/manipulacion
+uso
+manipulacion
 no
 se
 requieren

@@ -834,7 +834,8 @@ entre
 los
 isotopos
 13
-c/12c
+c
+12c
 en
 el
 aire
@@ -850,7 +851,8 @@ el
 estomago
 el
 cociente
-13c/12c
+13c
+12c
 en
 las
 muestras
@@ -877,7 +879,8 @@ cociente
 de
 los
 isotopos
-cg/emir
+cg
+emir
 el
 aumento
 de
@@ -890,7 +893,8 @@ absoluta
 en
 el
 cociente
-13c/12c
+13c
+12c
 entre
 la
 muestra
@@ -1574,7 +1578,8 @@ valor
 entre
 el
 cociente
-13c/12c
+13c
+12c
 antes
 de
 la
@@ -1685,7 +1690,8 @@ cociente
 de
 los
 isotopos
-cg/emir
+cg
+emir
 en
 los
 estudios
@@ -1707,7 +1713,8 @@ o
 el
 cociente
 13
-c/12c
+c
+12c
 no
 varie
 desde
@@ -1746,7 +1753,8 @@ la
 determinacion
 del
 cociente
-13c/12c
+13c
+12c
 a
 validacion
 de
@@ -1762,10 +1770,12 @@ co2
 1%
 6%
 y
+=
 1.01x
 ­
 0.20
 r2
+=
 1.000
 linealidad
 0,5
@@ -1832,9 +1842,11 @@ de
 10
 ml
 y
+=
 1.0183x
 0.5686
 r2
+=
 1.000
 linealidad
 ministerio
@@ -1851,6 +1863,7 @@ reproductibilidad
 de
 13c
 n
+=
 5
 ±
 0.3
@@ -1965,7 +1978,6 @@ de
 la
 primera
 autorizacion
-/
 renovacion
 de
 la
