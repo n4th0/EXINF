@@ -105,12 +105,12 @@ ostream &operator<<(ostream &s, const InfTermDoc &p) {
 // ── InformacionTermino
 // ────────────────────────────────────────────────────────
 
-InformacionTermino::InformacionTermino() : ftc(0), l_docs() {}
+// InformacionTermino::InformacionTermino() : ftc(0), l_docs() {}
 
-InformacionTermino::~InformacionTermino() {
-  ftc = 0;
-  l_docs.clear();
-}
+// InformacionTermino::~InformacionTermino() {
+//   ftc = 0;
+//   l_docs.clear();
+// }
 
 ostream &operator<<(ostream &s, const InformacionTermino &p) {
   s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs.size();

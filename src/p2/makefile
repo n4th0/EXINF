@@ -13,6 +13,13 @@ all: indexador
 run: indexador
 	@./indexador
 
+
+a.out:
+	@g++ memory.cpp
+
+test: indexador a.out
+	@./a.out ./indexador
+
 indexador:    src/main.cpp $(OBJ)
 	@$(CC) $(OPTIONS) $(DEBUG) -I$(INCLUDEDIR) src/main.cpp $(OBJ) -o indexador
  

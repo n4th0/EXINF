@@ -12,7 +12,7 @@
 #include <sys/types.h>
 using namespace std;
 
-static constexpr size_t IO_BUF = 1 << 20;
+static constexpr size_t IO_BUF = 1 << 19;
 
 string IndexadorHash::steam(const string &s) const {
   string final;
@@ -47,7 +47,6 @@ IndexadorHash::IndexadorHash(const string &fichStopWords,
       }
     }
   }
-  // Pre-reservar stopWords para evitar rehashing
   stopWords.reserve(stopWords.size() * 2);
 }
 
@@ -126,7 +125,6 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
 
   tok.Tokenizar(fichero);
 
-  // ── OPTIMIZACIÓN: leer el fichero .tk entero en memoria de una vez ────────
   const string tkFile = fichero + ".tk";
   ifstream f2(tkFile, ios::binary | ios::ate);
   if (!f2.is_open())
@@ -138,49 +136,39 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
   f2.read(&contenido[0], fsize);
   f2.close();
 
-  // ── OPTIMIZACIÓN: reserva adaptativa del índice ───────────────────────────
-  // Estimamos tokens como bytes/6 (longitud media de palabra)
+  // AVL no necesita reserve() real, pero lo dejamos por compatibilidad de firma
   const size_t estimTokens = static_cast<size_t>(fsize) / 6 + 1;
-  indice.reserve(indice.size() + estimTokens / 4); // solo nuevos únicos
+  indice.reserve(indice.size() + estimTokens / 4);
 
   int numPal = 0, numPalSinParada = 0;
   int posGlobal = 0;
 
-  // ── OPTIMIZACIÓN: índice inverso para este documento ─────────────────────
   auto &termsDeEsteDoc = docTerminos[id_doc];
 
-  // ── OPTIMIZACIÓN: cache local term→InfTermDoc* para evitar búsquedas
-  //    repetidas en el hash global cuando el mismo término aparece mucho ─────
+  // Cache local term → InfTermDoc* para evitar búsquedas repetidas en el AVL
   unordered_map<string, InfTermDoc *> cacheLocal;
   cacheLocal.reserve(estimTokens / 8);
 
-  // Parsear contenido línea a línea sin allocaciones extra
   const char *ptr = contenido.data();
   const char *end = ptr + contenido.size();
 
   while (ptr < end) {
-    // Encontrar fin de línea
     const char *nl = static_cast<const char *>(memchr(ptr, '\n', end - ptr));
     const char *lineEnd = nl ? nl : end;
     const size_t len = lineEnd - ptr;
 
     if (len == 0) {
-      // Línea vacía: token vacío, solo avanzar posición
       posGlobal++;
       ptr = nl ? nl + 1 : end;
       continue;
     }
 
-    // ── OPTIMIZACIÓN: steam directamente sobre string_view-like sin copiar ──
-    // Construimos el string solo una vez para steam
     string token(ptr, len);
     ptr = nl ? nl + 1 : end;
 
     numPal++;
 
-    // ── OPTIMIZACIÓN: steam una sola vez, resultado reutilizado ──────────────
     const string term = steam(token);
-    // const string &term = steamOptimizado(token);
 
     if (stopWords.count(term)) {
       posGlobal++;
@@ -189,20 +177,20 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
 
     numPalSinParada++;
 
-    // Acceso al índice global con emplace para evitar construcción doble
+    // Acceso al índice global (unordered_map<string, InformacionTermino>)
     InformacionTermino &infTerm = indice[term];
-
     infTerm.incFtc();
     termsDeEsteDoc.insert(term);
 
-    // ── OPTIMIZACIÓN: cache local evita segunda búsqueda en
-    // indice[term].l_docs
+    // Cache local: la primera vez buscamos en el AVL de l_docs,
+    // las siguientes reutilizamos el puntero.
     InfTermDoc *itdPtr;
     auto cit = cacheLocal.find(term);
     if (cit != cacheLocal.end()) {
       itdPtr = cit->second;
     } else {
-      itdPtr = &infTerm.getL_docs_mut()[id_doc];
+      // operator[] en AVLMap crea la entrada si no existe (igual que std::map)
+      itdPtr = &infTerm.getL_docs_mut()[static_cast<uint16_t>(id_doc)];
       cacheLocal[term] = itdPtr;
     }
 
@@ -213,7 +201,6 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
     posGlobal++;
   }
 
-  // Número de términos diferentes = entradas únicas en el cache local
   const int numPalDif = static_cast<int>(cacheLocal.size());
 
   InfDoc &doc = indiceDocs[fichero];
@@ -221,7 +208,6 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
   doc.setNumPalSinParada(numPalSinParada);
   doc.setNumPalDiferentes(numPalDif);
 
-  // Actualizar estadísticas de colección
   informacionColeccionDocs.setNumDocs(indiceDocs.size());
   informacionColeccionDocs.setNumTotalPal(
       informacionColeccionDocs.getNumTotalPal() + numPal);
@@ -264,7 +250,6 @@ bool IndexadorHash::GuardarIndexacion() const {
   string dir = directorioIndice.empty() ? "." : directorioIndice;
   mkdir(dir.c_str(), 0755);
 
-  // ── OPTIMIZACIÓN: buffers de 512 KB para todos los ficheros ──────────────
   static char bufConfig[IO_BUF], bufStop[IO_BUF], bufCol[IO_BUF],
       bufDocs[IO_BUF], bufIdx[IO_BUF], bufPreg[IO_BUF];
 
@@ -319,31 +304,29 @@ bool IndexadorHash::GuardarIndexacion() const {
   }
   fDocs.close();
 
-  // ── OPTIMIZACIÓN: usar ostringstream con reserve para índice grande ───────
   ofstream fIdx(dir + "/indice.idx");
   if (!fIdx.is_open())
     return false;
   fIdx.rdbuf()->pubsetbuf(bufIdx, IO_BUF);
 
-  // ── OPTIMIZACIÓN: usar char[] + snprintf para enteros en lugar de << ─────
-  char numBuf[32];
   for (const auto &par : indice) {
     const InformacionTermino &inf = par.second;
     fIdx << "TERM " << par.first << '\n' << "ftc " << inf.getFtc() << '\n';
+
+    // ── Iterar sobre el AVL (in-order, ordenado por id de documento) ─────
     for (const auto &docPar : inf.getL_docs()) {
+      const uint16_t docId = docPar.first;
       const InfTermDoc &itd = docPar.second;
       const auto &pos = itd.getPosTerm();
-      fIdx << "DOC " << docPar.first << ' ' << itd.getFt() << ' ' << pos.size();
-      for (int p : pos) {
+      fIdx << "DOC " << docId << ' ' << itd.getFt() << ' ' << pos.size();
+      for (int p : pos)
         fIdx << ' ' << p;
-      }
       fIdx << '\n';
     }
     fIdx << "END\n";
   }
   fIdx.close();
 
-  // ── OPTIMIZACIÓN: guardar también el índice inverso docTerminos ───────────
   ofstream fDocTerm(dir + "/docTerminos.idx");
   if (!fDocTerm.is_open())
     return false;
@@ -428,7 +411,6 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   informacionColeccionDocs.setTamBytes(v);
   fCol.close();
 
-  // ── OPTIMIZACIÓN: pre-reservar indice según numTotalPalDiferentes ─────────
   indice.reserve(informacionColeccionDocs.getNumTotalPalDiferentes() * 2);
   indiceDocs.reserve(informacionColeccionDocs.getNumDocs() * 2);
 
@@ -457,7 +439,6 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   if (!fIdx.is_open())
     return false;
 
-  // ── OPTIMIZACIÓN: leer indice.idx entero en memoria ──────────────────────
   {
     fIdx.seekg(0, ios::end);
     const streamsize fsz = fIdx.tellg();
@@ -493,13 +474,13 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
           pos.push_back(p);
         }
         itd.setPosTerm(std::move(pos));
+        // ── Insertar en el AVL mediante addL_docs ────────────────────────
         inf.addL_docs(idDoc, std::move(itd));
       }
       indice[std::move(term)] = std::move(inf);
     }
   }
 
-  // ── OPTIMIZACIÓN: recuperar índice inverso si existe ─────────────────────
   {
     ifstream fDocTerm(dir + "/docTerminos.idx");
     if (fDocTerm.is_open()) {
@@ -521,7 +502,7 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
       }
       fDocTerm.close();
     } else {
-      // Reconstruir desde el índice si el fichero no existe (compatibilidad)
+      // Reconstruir desde el índice (compatibilidad)
       for (const auto &par : indice) {
         for (const auto &dp : par.second.getL_docs()) {
           docTerminos[dp.first].insert(par.first);
@@ -567,7 +548,6 @@ bool IndexadorHash::IndexarPregunta(const string &preg) {
   list<string> tokens;
   tok.Tokenizar(preg, tokens);
 
-  // ── OPTIMIZACIÓN: verificar existencia de términos válidos en un solo paso
   bool hayTerminos = false;
   for (const auto &t : tokens) {
     if (!stopWords.count(steam(t))) {
@@ -575,7 +555,6 @@ bool IndexadorHash::IndexarPregunta(const string &preg) {
       break;
     }
   }
-
   if (!hayTerminos)
     return false;
 
@@ -584,10 +563,8 @@ bool IndexadorHash::IndexarPregunta(const string &preg) {
   infPregunta = InformacionPregunta();
   pregunta = preg;
 
-  int count = 0;
-  int numPal = 0, numPalSinParada = 0;
+  int count = 0, numPal = 0, numPalSinParada = 0;
   for (const auto &token : tokens) {
-    // ── OPTIMIZACIÓN: steam una sola vez por token ────────────────────────
     const string term = steam(token);
     numPal++;
     if (stopWords.count(term)) {
@@ -657,11 +634,12 @@ bool IndexadorHash::Devuelve(const string &word, const string &nomDoc,
     infDoc = InfTermDoc();
     return false;
   }
-  const int doc = docIt->second.getidDoc();
-  const auto &ldocs = idxIt->second.getL_docs();
-  auto it = ldocs.find(doc);
-  if (it != ldocs.end()) {
-    infDoc = it->second;
+  const uint16_t doc = static_cast<uint16_t>(docIt->second.getidDoc());
+
+  // ── Búsqueda en el AVL ───────────────────────────────────────────────────
+  const InfTermDoc *ptr = idxIt->second.findDoc(doc);
+  if (ptr) {
+    infDoc = *ptr;
     return true;
   }
   infDoc = InfTermDoc();
@@ -677,11 +655,8 @@ bool IndexadorHash::BorraDoc(const string &nomDoc) {
   if (docIt == indiceDocs.end())
     return false;
 
-  const int doc = docIt->second.getidDoc();
+  const uint16_t doc = static_cast<uint16_t>(docIt->second.getidDoc());
 
-  // ── OPTIMIZACIÓN CLAVE: usar índice inverso docTerminos ──────────────────
-  // Antes: O(todos_los_términos_del_índice) - iteraba todo el índice.
-  // Ahora: O(términos_del_documento) - solo toca los términos del doc.
   auto dtIt = docTerminos.find(doc);
   if (dtIt != docTerminos.end()) {
     for (const auto &term : dtIt->second) {
@@ -690,10 +665,12 @@ bool IndexadorHash::BorraDoc(const string &nomDoc) {
         continue;
 
       auto &ldocs = idxIt->second.getL_docs_mut();
+
+      // ── find() en el AVL ─────────────────────────────────────────────────
       auto found = ldocs.find(doc);
       if (found != ldocs.end()) {
-        idxIt->second.setFtc(idxIt->second.getFtc() - found->second.getFt());
-        ldocs.erase(found);
+        idxIt->second.setFtc(idxIt->second.getFtc() - (*found).second.getFt());
+        ldocs.erase(doc); // erase por clave en AVLMap
       }
       if (ldocs.empty())
         indice.erase(idxIt);
@@ -774,10 +751,9 @@ bool IndexadorHash::ListarTerminos(const string &nomDoc) const {
     return false;
   const int doc = it->second.getidDoc();
 
-  // ── OPTIMIZACIÓN: usar docTerminos en lugar de escanear todo el índice ────
   auto dtIt = docTerminos.find(doc);
   if (dtIt == docTerminos.end())
-    return true; // doc existe pero sin términos
+    return true;
   for (const auto &term : dtIt->second) {
     auto idxIt = indice.find(term);
     if (idxIt != indice.end())
