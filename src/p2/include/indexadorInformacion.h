@@ -1,6 +1,7 @@
 #ifndef _INFORMACION_
 #define _INFORMACION_
 
+#include <algorithm>
 #include <iostream>
 #include <unordered_map>
 #include <vector>
@@ -50,17 +51,26 @@ public:
   ~InfTermDoc();
   InfTermDoc &operator=(const InfTermDoc &);
 
-  int getFt() const { return ft; }
+  const bool empty() const { return posTerm.size() == 0; }
+
+  int getFt() const { return posTerm.size(); }
   const vector<int> &getPosTerm() const { return posTerm; }
 
-  void setFt(int f) { ft = f; }
+  // void setFt(int f) { ft = f; }
   void setPosTerm(const vector<int> &p) { posTerm = p; }
 
-  void incFt() { ft++; }
+  // void incFt() { ft++; }
   void incPosTerm(int p) { posTerm.push_back(p); }
 
+  int doc_id;
+  bool operator<(const InfTermDoc &other) const {
+    return doc_id < other.doc_id;
+  }
+
+  bool operator==(int id) const { return doc_id == id; }
+
 private:
-  int ft;
+  // int ft;
   vector<int> posTerm;
 };
 
@@ -73,23 +83,101 @@ public:
   ~InformacionTermino();
   InformacionTermino &operator=(const InformacionTermino &);
 
-  // Mantiene getLdocs() por compatibilidad (devuelve copia)
-  unordered_map<int, InfTermDoc> getLdocs() const { return l_docs; }
+  // unordered_map<int, InfTermDoc> getLdocs() const { return l_docs; }
+  vector<InfTermDoc> &getLdocs() { return l_docs2; }
+  const vector<InfTermDoc> getLdocs() const { return l_docs2; }
 
+  // Replace the buggy find method with this:
+  InfTermDoc *find(int id_doc) {
+    if (l_docs2.empty())
+      return NULL;
+
+    int left = 0;
+    int right = l_docs2.size() - 1;
+
+    while (left <= right) {
+      int mid = left + (right - left) / 2;
+
+      if (l_docs2[mid].doc_id == id_doc) {
+        return &l_docs2[mid];
+      } else if (l_docs2[mid].doc_id < id_doc) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    return NULL;
+  }
+
+  InfTermDoc find(int id_doc) const {
+    if (l_docs2.empty())
+      return InfTermDoc();
+
+    int left = 0;
+    int right = l_docs2.size() - 1;
+
+    while (left <= right) {
+      int mid = left + (right - left) / 2;
+
+      if (l_docs2[mid].doc_id == id_doc) {
+        return l_docs2[mid];
+      } else if (l_docs2[mid].doc_id < id_doc) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    return InfTermDoc();
+  }
   int getFtc() const { return ftc; }
-  const unordered_map<int, InfTermDoc> &getL_docs() const { return l_docs; }
+  // const unordered_map<int, InfTermDoc> &getL_docs() const { return l_docs; }
 
-  unordered_map<int, InfTermDoc> &getL_docs_mut() { return l_docs; }
+  // unordered_map<int, InfTermDoc> &getL_docs_mut() { return l_docs; }
 
   void setFtc(int f) { ftc = f; }
-  void setL_docs(const unordered_map<int, InfTermDoc> &l) { l_docs = l; }
+
+  // void setL_docs(const unordered_map<int, InfTermDoc> &l) { l_docs = l; }
+
+  // void setL_docs(const unordered_map<int, InfTermDoc> &l) {
+  //   l_docs = l;
+  // }
 
   void incFtc() { ftc++; }
-  void addL_docs(int a, InfTermDoc l) { l_docs[a] = std::move(l); }
+  // void addL_docs(int a, InfTermDoc l) { l_docs[a] = std::move(l); }
+  void addL_docs(int a, const InfTermDoc &l) {
+    InfTermDoc newDoc = l;
+    newDoc.doc_id = a;
+    l_docs2.push_back(std::move(newDoc));
+  }
+  // void addL_docs(int a, InfTermDoc l) { l_docs[a] = std::move(l); }
+  bool delete_doc(int doc_id) {
+    int left = 0;
+    int right = l_docs2.size() - 1;
+
+    while (left <= right) {
+      int mid = left + (right - left) / 2;
+
+      if (l_docs2[mid].doc_id == doc_id) {
+        ftc -= l_docs2[mid].getFt();
+        l_docs2.erase(l_docs2.begin() + mid);
+        return true;
+      } else if (l_docs2[mid].doc_id < doc_id) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    return false; // Not found
+  }
 
 private:
   int ftc;
-  unordered_map<int, InfTermDoc> l_docs;
+  // unordered_map<int, InfTermDoc> l_docs;
+
+  vector<InfTermDoc> l_docs2;
 };
 
 class InfDoc {

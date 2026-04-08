@@ -98,7 +98,7 @@ std::ostream &operator<<(std::ostream &s, const Fecha &f) {
 
 ///////////////////////
 ostream &operator<<(ostream &s, const InfTermDoc &p) {
-  s << "ft: " << p.ft;
+  s << "ft: " << p.getFt();
 
   for (auto it = p.posTerm.begin(); it != p.posTerm.end(); it++) {
     s << "\t" << (*it);
@@ -110,10 +110,10 @@ ostream &operator<<(ostream &s, const InfTermDoc &p) {
 }
 
 ostream &operator<<(ostream &s, const InformacionTermino &p) {
-  s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs.size();
+  s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs2.size();
 
-  for (auto it = p.l_docs.begin(); it != p.l_docs.end(); it++) {
-    s << "\tId.Doc: " << (*it).first << "\t" << (*it).second;
+  for (auto it = p.l_docs2.begin(); it != p.l_docs2.end(); it++) {
+    s << "\tId.Doc: " << (*it).doc_id << "\t" << (*it);
   }
 
   // A continuación se mostrarían todos los elementos de p.l_docs: s <<
@@ -160,15 +160,17 @@ ostream &operator<<(ostream &s, const InformacionPregunta &p) {
 
 // class InfTermDoc {
 // InfTermDoc::InfTermDoc(const InfTermDoc &) {}
-InfTermDoc::InfTermDoc() : ft(0), posTerm() {}
+InfTermDoc::InfTermDoc() : posTerm(), doc_id() {}
 InfTermDoc::~InfTermDoc() {}
 // InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {}
 
-InfTermDoc::InfTermDoc(const InfTermDoc &p) : ft(p.ft), posTerm(p.posTerm) {}
+InfTermDoc::InfTermDoc(const InfTermDoc &p)
+    : posTerm(p.posTerm), doc_id(p.doc_id) {}
 
 InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {
   if (this != &p) {
-    ft = p.ft;
+    // ft = p.ft;
+    doc_id = p.doc_id;
     posTerm = p.posTerm;
   }
   return *this;
@@ -176,7 +178,7 @@ InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {
 
 // InformacionTermino
 InformacionTermino::InformacionTermino(const InformacionTermino &p)
-    : ftc(p.ftc), l_docs(p.l_docs) {}
+    : ftc(p.ftc), l_docs2(p.l_docs2) {}
 
 // unordered_map<int, InfTermDoc> InformacionTermino::getLdocs() const { return
 // this->l_docs; }
@@ -188,12 +190,12 @@ InformacionTermino::InformacionTermino() {
 } // Inicializa ftc = 0
 InformacionTermino::~InformacionTermino() {
   this->ftc = 0;
-  l_docs.clear();
+  l_docs2.clear();
 } // Pone ftc = 0 y vacía l_docs
 InformacionTermino &InformacionTermino::operator=(const InformacionTermino &p) {
 
   if (this != &p) {
-    this->l_docs = p.l_docs;
+    this->l_docs2 = p.l_docs2;
     this->ftc = p.ftc;
   }
   return *this;

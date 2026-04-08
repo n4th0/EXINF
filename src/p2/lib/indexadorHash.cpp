@@ -1,5 +1,6 @@
 #include "../include/indexadorHash.h"
 #include "../include/stemmer.h"
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -147,13 +148,25 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
     // copiar entero. Ahora: acceso directo por referencia mutable, sin copias.
     // ────────────────────────────────────────────────────────────────────────
     InformacionTermino &infTerm = indice[term];
-    infTerm.incFtc();
+    infTerm.incFtc(); // dudo incluso de que haga falta
     terminos_este_doc.insert(term);
 
-    InfTermDoc &itd = infTerm.getL_docs_mut()[id_doc];
-    itd.incFt();
-    if (almacenarPosTerm)
-      itd.incPosTerm(posGlobal);
+    InfTermDoc *itd = infTerm.find(id_doc);
+    if (itd == nullptr) {
+      InfTermDoc newDoc;
+      newDoc.doc_id = id_doc;
+      if (almacenarPosTerm) {
+        newDoc.incPosTerm(posGlobal);
+      }
+      infTerm.addL_docs(id_doc, std::move(newDoc));
+    } else {
+      // Document found - update existing entry
+      // itd->incFt();
+      if (almacenarPosTerm) {
+        itd->incPosTerm(posGlobal);
+        // cout << term << " llego: " << *itd << endl;
+      }
+    }
 
     indiceDocs[fichero].incNumPalSinParada();
     posGlobal++;
@@ -205,6 +218,7 @@ bool IndexadorHash::IndexarDirectorio(const string &dirAIndexar) {
   return Indexar(".lista_fich");
 }
 
+// TODO: rehacer esto entero (la parte de obtener los InformacionTermino)
 bool IndexadorHash::GuardarIndexacion() const {
   string dir = directorioIndice.empty() ? "." : directorioIndice;
   mkdir(dir.c_str(), 0755);
@@ -262,19 +276,21 @@ bool IndexadorHash::GuardarIndexacion() const {
   if (!fIdx.is_open())
     return false;
   fIdx.rdbuf()->pubsetbuf(nullptr, 1 << 16);
-  for (const auto &par : indice) {
-    const InformacionTermino &inf = par.second;
-    fIdx << "TERM " << par.first << '\n' << "ftc " << inf.getFtc() << '\n';
-    for (const auto &docPar : inf.getL_docs()) {
-      const InfTermDoc &itd = docPar.second;
-      const auto &pos = itd.getPosTerm(); // ahora es vector<int>
-      fIdx << "DOC " << docPar.first << ' ' << itd.getFt() << ' ' << pos.size();
-      for (int p : pos)
-        fIdx << ' ' << p;
-      fIdx << '\n';
-    }
-    fIdx << "END\n";
-  }
+
+  // for (const auto &par : indice) {
+  //   const InformacionTermino &inf = par.second;
+  //   fIdx << "TERM " << par.first << '\n' << "ftc " << inf.getFtc() << '\n';
+  //   for (const auto &docPar : inf.getLdocs()) {
+  //     const InfTermDoc &itd = docPar.second;
+  //     const auto &pos = itd.getPosTerm(); // ahora es vector<int>
+  //     fIdx << "DOC " << docPar.first << ' ' << itd.getFt() << ' ' <<
+  //     pos.size(); for (int p : pos)
+  //       fIdx << ' ' << p;
+  //     fIdx << '\n';
+  //   }
+  //   fIdx << "END\n";
+  // }
+
   fIdx.close();
 
   ofstream fPreg(dir + "/pregunta.idx");
@@ -296,6 +312,7 @@ bool IndexadorHash::GuardarIndexacion() const {
   return true;
 }
 
+// TODO: rehacer esto entero (la parte de obtener los InformacionTermino)
 bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   indice.clear();
   indiceDocs.clear();
@@ -390,7 +407,7 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
       int idDoc, ft, nPos;
       fIdx >> idDoc >> ft >> nPos;
       InfTermDoc itd;
-      itd.setFt(ft);
+      // itd.setFt(ft);
       // OPTIMIZACIÓN: reservar capacidad del vector antes de leer
       vector<int> pos;
       pos.reserve(nPos);
@@ -518,6 +535,7 @@ bool IndexadorHash::Devuelve(const string &word,
   return false;
 }
 
+// dado una palabra si está en un documento
 bool IndexadorHash::Devuelve(const string &word, const string &nomDoc,
                              InfTermDoc &infDoc) const {
   string term = steam(word);
@@ -526,13 +544,14 @@ bool IndexadorHash::Devuelve(const string &word, const string &nomDoc,
     return false;
   }
   int doc = indiceDocs.at(nomDoc).getidDoc();
-  const auto &ldocs = indice.at(term).getL_docs();
-  auto it = ldocs.find(doc);
-  if (it != ldocs.end()) {
-    infDoc = it->second;
+  auto ldocs = indice.at(term);
+
+  infDoc = *ldocs.find(doc);
+
+  if (!infDoc.empty()) {
     return true;
   }
-  infDoc = InfTermDoc();
+  // infDoc = InfTermDoc();
   return false;
 }
 
@@ -552,13 +571,12 @@ bool IndexadorHash::BorraDoc(const string &nomDoc) {
   // Ahora: getL_docs_mut() da referencia directa, erase in-place.
   // ────────────────────────────────────────────────────────────────────────
   for (auto it = indice.begin(); it != indice.end();) {
-    auto &ldocs = it->second.getL_docs_mut();
-    auto found = ldocs.find(doc);
-    if (found != ldocs.end()) {
-      it->second.setFtc(it->second.getFtc() - found->second.getFt());
-      ldocs.erase(found);
+
+    if (it->second.delete_doc(doc)) {
+      // cout << "elimino " << (it->first) << endl;
     }
-    if (ldocs.empty())
+
+    if (it->second.getFtc() == 0)
       it = indice.erase(it);
     else
       ++it;
@@ -636,7 +654,7 @@ bool IndexadorHash::ListarTerminos(const string &nomDoc) const {
     return false;
   int doc = it->second.getidDoc();
   for (const auto &par : indice) {
-    if (par.second.getL_docs().count(doc))
+    if (!par.second.find(doc).empty())
       cout << par.first << '\t' << par.second << '\n';
   }
   return true;

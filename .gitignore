@@ -4,6 +4,7 @@
 # practica 1 
 *.tk
 practica1
+indexador
 
 # Compiled Object files
 *.slo
