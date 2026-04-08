@@ -1,12 +1,11 @@
 #ifndef _INFORMACION_
 #define _INFORMACION_
 
-#include <iostream>
-#include <unordered_map>
-#include <vector>
-
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <unordered_map>
+#include <vector>
 using namespace std;
 
 class Fecha {
@@ -45,16 +44,21 @@ class InfTermDoc {
   friend ostream &operator<<(ostream &s, const InfTermDoc &p);
 
 public:
-  InfTermDoc(const InfTermDoc &);
+  InfTermDoc(const InfTermDoc &) = default;
+  InfTermDoc(InfTermDoc &&) = default; // ── OPTIMIZACIÓN: move ctor
   InfTermDoc();
-  ~InfTermDoc();
-  InfTermDoc &operator=(const InfTermDoc &);
+  ~InfTermDoc() = default;
+  InfTermDoc &operator=(const InfTermDoc &) = default;
+  InfTermDoc &
+  operator=(InfTermDoc &&) = default; // ── OPTIMIZACIÓN: move assign
 
   int getFt() const { return ft; }
   const vector<int> &getPosTerm() const { return posTerm; }
 
   void setFt(int f) { ft = f; }
+  // ── OPTIMIZACIÓN: move overload para evitar copia del vector ─────────────
   void setPosTerm(const vector<int> &p) { posTerm = p; }
+  void setPosTerm(vector<int> &&p) { posTerm = std::move(p); }
 
   void incFt() { ft++; }
   void incPosTerm(int p) { posTerm.push_back(p); }
@@ -68,39 +72,47 @@ class InformacionTermino {
   friend ostream &operator<<(ostream &s, const InformacionTermino &p);
 
 public:
-  InformacionTermino(const InformacionTermino &);
+  InformacionTermino(const InformacionTermino &) = default;
+  InformacionTermino(InformacionTermino &&) = default;
   InformacionTermino();
   ~InformacionTermino();
-  InformacionTermino &operator=(const InformacionTermino &);
+  InformacionTermino &operator=(const InformacionTermino &) = default;
+  InformacionTermino &operator=(InformacionTermino &&) = default;
 
-  // Mantiene getLdocs() por compatibilidad (devuelve copia)
-  unordered_map<int, InfTermDoc> getLdocs() const { return l_docs; }
+  unordered_map<uint16_t, InfTermDoc> getLdocs() const { return l_docs; }
 
   int getFtc() const { return ftc; }
-  const unordered_map<int, InfTermDoc> &getL_docs() const { return l_docs; }
+  const unordered_map<uint16_t, InfTermDoc> &getL_docs() const {
+    return l_docs;
+  }
+  unordered_map<uint16_t, InfTermDoc> &getL_docs_mut() { return l_docs; }
 
-  unordered_map<int, InfTermDoc> &getL_docs_mut() { return l_docs; }
+  inline void setFtc(int f) { ftc = f; }
+  inline void setL_docs(const unordered_map<uint16_t, InfTermDoc> &l) {
+    l_docs = l;
+  }
 
-  void setFtc(int f) { ftc = f; }
-  void setL_docs(const unordered_map<int, InfTermDoc> &l) { l_docs = l; }
-
-  void incFtc() { ftc++; }
-  void addL_docs(int a, InfTermDoc l) { l_docs[a] = std::move(l); }
+  inline void incFtc() { ftc++; }
+  // ── OPTIMIZACIÓN: move overload ──────────────────────────────────────────
+  void addL_docs(uint16_t a, InfTermDoc &&l) { l_docs[a] = std::move(l); }
+  void addL_docs(int a, const InfTermDoc &l) { l_docs[a] = l; }
 
 private:
   int ftc;
-  unordered_map<int, InfTermDoc> l_docs;
+  unordered_map<uint16_t, InfTermDoc> l_docs;
 };
 
 class InfDoc {
   friend ostream &operator<<(ostream &s, const InfDoc &p);
 
 public:
-  InfDoc(const InfDoc &);
+  InfDoc(const InfDoc &) = default;
+  InfDoc(InfDoc &&) = default; // ── OPTIMIZACIÓN
   InfDoc(const string &);
   InfDoc();
-  ~InfDoc();
-  InfDoc &operator=(const InfDoc &);
+  ~InfDoc() = default;
+  InfDoc &operator=(const InfDoc &) = default;
+  InfDoc &operator=(InfDoc &&) = default; // ── OPTIMIZACIÓN
 
   int getidDoc() const;
 
@@ -123,7 +135,7 @@ public:
   void setFechaModificacion(const Fecha &f) { fechaModificacion = f; }
 
 private:
-  int idDoc;
+  uint16_t idDoc;
   int numPal;
   int numPalSinParada;
   int numPalDiferentes;
@@ -135,10 +147,12 @@ class InfColeccionDocs {
   friend ostream &operator<<(ostream &s, const InfColeccionDocs &p);
 
 public:
-  InfColeccionDocs(const InfColeccionDocs &);
+  InfColeccionDocs(const InfColeccionDocs &) = default;
+  InfColeccionDocs(InfColeccionDocs &&) = default;
   InfColeccionDocs();
-  ~InfColeccionDocs();
-  InfColeccionDocs &operator=(const InfColeccionDocs &);
+  ~InfColeccionDocs() = default;
+  InfColeccionDocs &operator=(const InfColeccionDocs &) = default;
+  InfColeccionDocs &operator=(InfColeccionDocs &&) = default;
 
   int getNumDocs() const { return numDocs; }
   int getNumTotalPal() const { return numTotalPal; }
@@ -153,7 +167,7 @@ public:
   void setTamBytes(int t) { tamBytes = t; }
 
 private:
-  int numDocs;
+  uint16_t numDocs;
   int numTotalPal;
   int numTotalPalSinParada;
   int numTotalPalDiferentes;
@@ -164,46 +178,51 @@ class InformacionTerminoPregunta {
   friend ostream &operator<<(ostream &s, const InformacionTerminoPregunta &p);
 
 public:
-  InformacionTerminoPregunta(const InformacionTerminoPregunta &);
+  InformacionTerminoPregunta(const InformacionTerminoPregunta &) = default;
+  InformacionTerminoPregunta(InformacionTerminoPregunta &&) = default;
   InformacionTerminoPregunta();
-  ~InformacionTerminoPregunta();
-  InformacionTerminoPregunta &operator=(const InformacionTerminoPregunta &);
+  ~InformacionTerminoPregunta() = default;
+  InformacionTerminoPregunta &
+  operator=(const InformacionTerminoPregunta &) = default;
+  InformacionTerminoPregunta &
+  operator=(InformacionTerminoPregunta &&) = default;
 
   int getFt() const { return ft; }
-  // CAMBIO: vector en lugar de list
-  const vector<int> &getPosTerm() const { return posTerm; }
+  const vector<uint16_t> &getPosTerm() const { return posTerm; }
 
   void setFt(int f) { ft = f; }
   void incFt() { ft++; }
-  void setPosTerm(const vector<int> &p) { posTerm = p; }
+  void setPosTerm(const vector<uint16_t> &p) { posTerm = p; }
   void addPosTerm(int pos) { posTerm.push_back(pos); }
 
 private:
   int ft;
-  vector<int> posTerm;
+  vector<uint16_t> posTerm;
 };
 
 class InformacionPregunta {
   friend ostream &operator<<(ostream &s, const InformacionPregunta &p);
 
 public:
-  InformacionPregunta(const InformacionPregunta &);
+  InformacionPregunta(const InformacionPregunta &) = default;
+  InformacionPregunta(InformacionPregunta &&) = default;
   InformacionPregunta();
-  ~InformacionPregunta();
-  InformacionPregunta &operator=(const InformacionPregunta &);
+  ~InformacionPregunta() = default;
+  InformacionPregunta &operator=(const InformacionPregunta &) = default;
+  InformacionPregunta &operator=(InformacionPregunta &&) = default;
 
-  int getNumTotalPal() const { return numTotalPal; }
-  int getNumTotalPalSinParada() const { return numTotalPalSinParada; }
-  int getNumTotalPalDiferentes() const { return numTotalPalDiferentes; }
+  uint16_t getNumTotalPal() const { return numTotalPal; }
+  uint16_t getNumTotalPalSinParada() const { return numTotalPalSinParada; }
+  uint16_t getNumTotalPalDiferentes() const { return numTotalPalDiferentes; }
 
   void setNumTotalPal(int n) { numTotalPal = n; }
   void setNumTotalPalSinParada(int n) { numTotalPalSinParada = n; }
   void setNumTotalPalDiferentes(int n) { numTotalPalDiferentes = n; }
 
 private:
-  int numTotalPal;
-  int numTotalPalSinParada;
-  int numTotalPalDiferentes;
+  uint16_t numTotalPal;
+  uint16_t numTotalPalSinParada;
+  uint16_t numTotalPalDiferentes;
 };
 
 #endif

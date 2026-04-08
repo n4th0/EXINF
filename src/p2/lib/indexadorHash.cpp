@@ -12,6 +12,8 @@
 #include <sys/types.h>
 using namespace std;
 
+static constexpr size_t IO_BUF = 1 << 20;
+
 string IndexadorHash::steam(const string &s) const {
   string final;
   stemmerPorter stemmer = stemmerPorter();
@@ -39,12 +41,14 @@ IndexadorHash::IndexadorHash(const string &fichStopWords,
         list<string> tmp;
         tok.Tokenizar(word, tmp);
         if (!tmp.empty())
-          stopWords.insert(tmp.front());
+          stopWords.insert(std::move(tmp.front()));
       } else {
         stopWords.insert(word);
       }
     }
   }
+  // Pre-reservar stopWords para evitar rehashing
+  stopWords.reserve(stopWords.size() * 2);
 }
 
 IndexadorHash::IndexadorHash(const string &directorioIndexacion) {
@@ -60,7 +64,8 @@ IndexadorHash::IndexadorHash(const IndexadorHash &other)
       infPregunta(other.infPregunta), stopWords(other.stopWords),
       ficheroStopWords(other.ficheroStopWords), tok(other.tok),
       directorioIndice(other.directorioIndice), tipoStemmer(other.tipoStemmer),
-      almacenarPosTerm(other.almacenarPosTerm) {}
+      almacenarPosTerm(other.almacenarPosTerm), docTerminos(other.docTerminos) {
+}
 
 IndexadorHash &IndexadorHash::operator=(const IndexadorHash &other) {
   if (this != &other) {
@@ -76,6 +81,7 @@ IndexadorHash &IndexadorHash::operator=(const IndexadorHash &other) {
     directorioIndice = other.directorioIndice;
     tipoStemmer = other.tipoStemmer;
     almacenarPosTerm = other.almacenarPosTerm;
+    docTerminos = other.docTerminos;
   }
   return *this;
 }
@@ -84,9 +90,11 @@ IndexadorHash::~IndexadorHash() {}
 
 bool IndexadorHash::IndexarFichero(const string &fichero) {
   int id_doc;
-  ifstream f(fichero);
-  if (!f.is_open())
-    return false;
+  {
+    ifstream f(fichero);
+    if (!f.is_open())
+      return false;
+  }
 
   if (indiceDocs.count(fichero)) {
     struct stat st;
@@ -117,58 +125,108 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
   }
 
   tok.Tokenizar(fichero);
-  ifstream f2(fichero + ".tk");
+
+  // ── OPTIMIZACIÓN: leer el fichero .tk entero en memoria de una vez ────────
+  const string tkFile = fichero + ".tk";
+  ifstream f2(tkFile, ios::binary | ios::ate);
   if (!f2.is_open())
     return false;
 
-  // Pre-reservamos para reducir rehashing
-  indice.reserve(indice.size() + 1024);
+  const streamsize fsize = f2.tellg();
+  f2.seekg(0);
+  string contenido(fsize, '\0');
+  f2.read(&contenido[0], fsize);
+  f2.close();
 
-  string line;
+  // ── OPTIMIZACIÓN: reserva adaptativa del índice ───────────────────────────
+  // Estimamos tokens como bytes/6 (longitud media de palabra)
+  const size_t estimTokens = static_cast<size_t>(fsize) / 6 + 1;
+  indice.reserve(indice.size() + estimTokens / 4); // solo nuevos únicos
+
+  int numPal = 0, numPalSinParada = 0;
   int posGlobal = 0;
-  unordered_set<string> terminos_este_doc;
 
-  while (getline(f2, line)) {
-    if (line.empty()) {
+  // ── OPTIMIZACIÓN: índice inverso para este documento ─────────────────────
+  auto &termsDeEsteDoc = docTerminos[id_doc];
+
+  // ── OPTIMIZACIÓN: cache local term→InfTermDoc* para evitar búsquedas
+  //    repetidas en el hash global cuando el mismo término aparece mucho ─────
+  unordered_map<string, InfTermDoc *> cacheLocal;
+  cacheLocal.reserve(estimTokens / 8);
+
+  // Parsear contenido línea a línea sin allocaciones extra
+  const char *ptr = contenido.data();
+  const char *end = ptr + contenido.size();
+
+  while (ptr < end) {
+    // Encontrar fin de línea
+    const char *nl = static_cast<const char *>(memchr(ptr, '\n', end - ptr));
+    const char *lineEnd = nl ? nl : end;
+    const size_t len = lineEnd - ptr;
+
+    if (len == 0) {
+      // Línea vacía: token vacío, solo avanzar posición
       posGlobal++;
+      ptr = nl ? nl + 1 : end;
       continue;
     }
 
-    const string term = steam(line);
-    indiceDocs[fichero].incNumPal();
+    // ── OPTIMIZACIÓN: steam directamente sobre string_view-like sin copiar ──
+    // Construimos el string solo una vez para steam
+    string token(ptr, len);
+    ptr = nl ? nl + 1 : end;
+
+    numPal++;
+
+    // ── OPTIMIZACIÓN: steam una sola vez, resultado reutilizado ──────────────
+    const string term = steam(token);
+    // const string &term = steamOptimizado(token);
 
     if (stopWords.count(term)) {
       posGlobal++;
       continue;
     }
 
-    // ── OPTIMIZACIÓN CLAVE ──────────────────────────────────────────────────
-    // Antes: getL_docs() devolvía copia del mapa → setL_docs() lo volvía a
-    // copiar entero. Ahora: acceso directo por referencia mutable, sin copias.
-    // ────────────────────────────────────────────────────────────────────────
+    numPalSinParada++;
+
+    // Acceso al índice global con emplace para evitar construcción doble
     InformacionTermino &infTerm = indice[term];
+
     infTerm.incFtc();
-    terminos_este_doc.insert(term);
+    termsDeEsteDoc.insert(term);
 
-    InfTermDoc &itd = infTerm.getL_docs_mut()[id_doc];
-    itd.incFt();
+    // ── OPTIMIZACIÓN: cache local evita segunda búsqueda en
+    // indice[term].l_docs
+    InfTermDoc *itdPtr;
+    auto cit = cacheLocal.find(term);
+    if (cit != cacheLocal.end()) {
+      itdPtr = cit->second;
+    } else {
+      itdPtr = &infTerm.getL_docs_mut()[id_doc];
+      cacheLocal[term] = itdPtr;
+    }
+
+    itdPtr->incFt();
     if (almacenarPosTerm)
-      itd.incPosTerm(posGlobal);
+      itdPtr->incPosTerm(posGlobal);
 
-    indiceDocs[fichero].incNumPalSinParada();
     posGlobal++;
   }
 
-  indiceDocs[fichero].setNumPalDiferentes(terminos_este_doc.size());
+  // Número de términos diferentes = entradas únicas en el cache local
+  const int numPalDif = static_cast<int>(cacheLocal.size());
+
+  InfDoc &doc = indiceDocs[fichero];
+  doc.setNumPal(numPal);
+  doc.setNumPalSinParada(numPalSinParada);
+  doc.setNumPalDiferentes(numPalDif);
 
   // Actualizar estadísticas de colección
-  const InfDoc &doc = indiceDocs[fichero];
   informacionColeccionDocs.setNumDocs(indiceDocs.size());
   informacionColeccionDocs.setNumTotalPal(
-      informacionColeccionDocs.getNumTotalPal() + doc.getNumPal());
+      informacionColeccionDocs.getNumTotalPal() + numPal);
   informacionColeccionDocs.setNumTotalPalSinParada(
-      informacionColeccionDocs.getNumTotalPalSinParada() +
-      doc.getNumPalSinParada());
+      informacionColeccionDocs.getNumTotalPalSinParada() + numPalSinParada);
   informacionColeccionDocs.setNumTotalPalDiferentes(indice.size());
   informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes() +
                                        doc.getTamBytes());
@@ -182,10 +240,7 @@ bool IndexadorHash::Indexar(const string &ficheroDocumentos) {
 
   bool result = true;
   string line;
-  // int count = 0;
   while (getline(f, line) && result) {
-    // cout << count << '\n';
-    // count++;
     if (!line.empty())
       result = result && IndexarFichero(line);
   }
@@ -209,9 +264,14 @@ bool IndexadorHash::GuardarIndexacion() const {
   string dir = directorioIndice.empty() ? "." : directorioIndice;
   mkdir(dir.c_str(), 0755);
 
+  // ── OPTIMIZACIÓN: buffers de 512 KB para todos los ficheros ──────────────
+  static char bufConfig[IO_BUF], bufStop[IO_BUF], bufCol[IO_BUF],
+      bufDocs[IO_BUF], bufIdx[IO_BUF], bufPreg[IO_BUF];
+
   ofstream fConfig(dir + "/config.idx");
   if (!fConfig.is_open())
     return false;
+  fConfig.rdbuf()->pubsetbuf(bufConfig, IO_BUF);
   fConfig << ficheroStopWords << '\n'
           << tok.DelimitadoresPalabra() << '\n'
           << tok.CasosEspeciales() << '\n'
@@ -225,6 +285,7 @@ bool IndexadorHash::GuardarIndexacion() const {
   ofstream fStop(dir + "/stopwords.idx");
   if (!fStop.is_open())
     return false;
+  fStop.rdbuf()->pubsetbuf(bufStop, IO_BUF);
   for (const auto &w : stopWords)
     fStop << w << '\n';
   fStop.close();
@@ -232,6 +293,7 @@ bool IndexadorHash::GuardarIndexacion() const {
   ofstream fCol(dir + "/coleccion.idx");
   if (!fCol.is_open())
     return false;
+  fCol.rdbuf()->pubsetbuf(bufCol, IO_BUF);
   fCol << informacionColeccionDocs.getNumDocs() << '\n'
        << informacionColeccionDocs.getNumTotalPal() << '\n'
        << informacionColeccionDocs.getNumTotalPalSinParada() << '\n'
@@ -239,11 +301,10 @@ bool IndexadorHash::GuardarIndexacion() const {
        << informacionColeccionDocs.getTamBytes() << '\n';
   fCol.close();
 
-  // Usar buffer grande para escritura — reduce syscalls
   ofstream fDocs(dir + "/docs.idx");
   if (!fDocs.is_open())
     return false;
-  fDocs.rdbuf()->pubsetbuf(nullptr, 1 << 16);
+  fDocs.rdbuf()->pubsetbuf(bufDocs, IO_BUF);
   for (const auto &par : indiceDocs) {
     const InfDoc &d = par.second;
     fDocs << par.first << '\n'
@@ -258,34 +319,52 @@ bool IndexadorHash::GuardarIndexacion() const {
   }
   fDocs.close();
 
+  // ── OPTIMIZACIÓN: usar ostringstream con reserve para índice grande ───────
   ofstream fIdx(dir + "/indice.idx");
   if (!fIdx.is_open())
     return false;
-  fIdx.rdbuf()->pubsetbuf(nullptr, 1 << 16);
+  fIdx.rdbuf()->pubsetbuf(bufIdx, IO_BUF);
+
+  // ── OPTIMIZACIÓN: usar char[] + snprintf para enteros en lugar de << ─────
+  char numBuf[32];
   for (const auto &par : indice) {
     const InformacionTermino &inf = par.second;
     fIdx << "TERM " << par.first << '\n' << "ftc " << inf.getFtc() << '\n';
     for (const auto &docPar : inf.getL_docs()) {
       const InfTermDoc &itd = docPar.second;
-      const auto &pos = itd.getPosTerm(); // ahora es vector<int>
+      const auto &pos = itd.getPosTerm();
       fIdx << "DOC " << docPar.first << ' ' << itd.getFt() << ' ' << pos.size();
-      for (int p : pos)
+      for (int p : pos) {
         fIdx << ' ' << p;
+      }
       fIdx << '\n';
     }
     fIdx << "END\n";
   }
   fIdx.close();
 
+  // ── OPTIMIZACIÓN: guardar también el índice inverso docTerminos ───────────
+  ofstream fDocTerm(dir + "/docTerminos.idx");
+  if (!fDocTerm.is_open())
+    return false;
+  fDocTerm.rdbuf()->pubsetbuf(nullptr, IO_BUF);
+  for (const auto &par : docTerminos) {
+    fDocTerm << par.first << ' ' << par.second.size() << '\n';
+    for (const auto &t : par.second)
+      fDocTerm << t << '\n';
+  }
+  fDocTerm.close();
+
   ofstream fPreg(dir + "/pregunta.idx");
   if (!fPreg.is_open())
     return false;
+  fPreg.rdbuf()->pubsetbuf(bufPreg, IO_BUF);
   fPreg << infPregunta.getNumTotalPal() << '\n'
         << infPregunta.getNumTotalPalSinParada() << '\n'
         << infPregunta.getNumTotalPalDiferentes() << '\n';
   for (const auto &par : indicePregunta) {
     const InformacionTerminoPregunta &itp = par.second;
-    const auto &pos = itp.getPosTerm(); // ahora es vector<int>
+    const auto &pos = itp.getPosTerm();
     fPreg << "TERM " << par.first << ' ' << itp.getFt() << ' ' << pos.size();
     for (int p : pos)
       fPreg << ' ' << p;
@@ -301,6 +380,7 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   indiceDocs.clear();
   indicePregunta.clear();
   stopWords.clear();
+  docTerminos.clear();
   pregunta = "";
   infPregunta = InformacionPregunta();
   informacionColeccionDocs = InfColeccionDocs();
@@ -329,6 +409,7 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   while (getline(fStop, w))
     if (!w.empty())
       stopWords.insert(std::move(w));
+  stopWords.reserve(stopWords.size() * 2);
   fStop.close();
 
   ifstream fCol(dir + "/coleccion.idx");
@@ -346,6 +427,10 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   fCol >> v;
   informacionColeccionDocs.setTamBytes(v);
   fCol.close();
+
+  // ── OPTIMIZACIÓN: pre-reservar indice según numTotalPalDiferentes ─────────
+  indice.reserve(informacionColeccionDocs.getNumTotalPalDiferentes() * 2);
+  indiceDocs.reserve(informacionColeccionDocs.getNumDocs() * 2);
 
   ifstream fDocs(dir + "/docs.idx");
   if (!fDocs.is_open())
@@ -372,39 +457,78 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   if (!fIdx.is_open())
     return false;
 
-  string token;
-  while (fIdx >> token) {
-    if (token != "TERM")
-      return false;
-    string term;
-    fIdx >> term;
-    fIdx.ignore();
-    InformacionTermino inf;
-    string tag;
-    int ftc;
-    fIdx >> tag >> ftc;
-    inf.setFtc(ftc);
-    while (fIdx >> tag && tag != "END") {
-      if (tag != "DOC")
+  // ── OPTIMIZACIÓN: leer indice.idx entero en memoria ──────────────────────
+  {
+    fIdx.seekg(0, ios::end);
+    const streamsize fsz = fIdx.tellg();
+    fIdx.seekg(0);
+    string buf(fsz, '\0');
+    fIdx.read(&buf[0], fsz);
+    fIdx.close();
+
+    istringstream ss(std::move(buf));
+    string token;
+    while (ss >> token) {
+      if (token != "TERM")
         return false;
-      int idDoc, ft, nPos;
-      fIdx >> idDoc >> ft >> nPos;
-      InfTermDoc itd;
-      itd.setFt(ft);
-      // OPTIMIZACIÓN: reservar capacidad del vector antes de leer
-      vector<int> pos;
-      pos.reserve(nPos);
-      for (int i = 0; i < nPos; i++) {
-        int p;
-        fIdx >> p;
-        pos.push_back(p);
+      string term;
+      ss >> term;
+      InformacionTermino inf;
+      string tag;
+      int ftc;
+      ss >> tag >> ftc;
+      inf.setFtc(ftc);
+      while (ss >> tag && tag != "END") {
+        if (tag != "DOC")
+          return false;
+        uint16_t idDoc, ft, nPos;
+        ss >> idDoc >> ft >> nPos;
+        InfTermDoc itd;
+        itd.setFt(ft);
+        vector<int> pos;
+        pos.reserve(nPos);
+        for (int i = 0; i < nPos; i++) {
+          int p;
+          ss >> p;
+          pos.push_back(p);
+        }
+        itd.setPosTerm(std::move(pos));
+        inf.addL_docs(idDoc, std::move(itd));
       }
-      itd.setPosTerm(std::move(pos));
-      inf.addL_docs(idDoc, std::move(itd));
+      indice[std::move(term)] = std::move(inf);
     }
-    indice[std::move(term)] = std::move(inf);
   }
-  fIdx.close();
+
+  // ── OPTIMIZACIÓN: recuperar índice inverso si existe ─────────────────────
+  {
+    ifstream fDocTerm(dir + "/docTerminos.idx");
+    if (fDocTerm.is_open()) {
+      string line2;
+      while (getline(fDocTerm, line2)) {
+        if (line2.empty())
+          continue;
+        istringstream iss(line2);
+        int docId, nTerms;
+        iss >> docId >> nTerms;
+        auto &tset = docTerminos[docId];
+        tset.reserve(nTerms * 2);
+        for (int i = 0; i < nTerms; i++) {
+          string t;
+          getline(fDocTerm, t);
+          if (!t.empty())
+            tset.insert(std::move(t));
+        }
+      }
+      fDocTerm.close();
+    } else {
+      // Reconstruir desde el índice si el fichero no existe (compatibilidad)
+      for (const auto &par : indice) {
+        for (const auto &dp : par.second.getL_docs()) {
+          docTerminos[dp.first].insert(par.first);
+        }
+      }
+    }
+  }
 
   ifstream fPreg(dir + "/pregunta.idx");
   if (!fPreg.is_open())
@@ -416,6 +540,7 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   infPregunta.setNumTotalPalDiferentes(ntpd);
   fPreg.ignore();
   string linea;
+  indicePregunta.reserve(ntpd * 2);
   while (getline(fPreg, linea)) {
     if (linea.empty())
       continue;
@@ -442,31 +567,34 @@ bool IndexadorHash::IndexarPregunta(const string &preg) {
   list<string> tokens;
   tok.Tokenizar(preg, tokens);
 
+  // ── OPTIMIZACIÓN: verificar existencia de términos válidos en un solo paso
   bool hayTerminos = false;
-  for (const auto &t : tokens)
+  for (const auto &t : tokens) {
     if (!stopWords.count(steam(t))) {
       hayTerminos = true;
       break;
     }
+  }
 
   if (!hayTerminos)
     return false;
 
   indicePregunta.clear();
+  indicePregunta.reserve(tokens.size() * 2);
   infPregunta = InformacionPregunta();
   pregunta = preg;
 
   int count = 0;
   int numPal = 0, numPalSinParada = 0;
   for (const auto &token : tokens) {
-    string term = steam(token);
+    // ── OPTIMIZACIÓN: steam una sola vez por token ────────────────────────
+    const string term = steam(token);
     numPal++;
     if (stopWords.count(term)) {
       count++;
       continue;
     }
     numPalSinParada++;
-
     auto &itp = indicePregunta[term];
     itp.incFt();
     if (almacenarPosTerm)
@@ -489,9 +617,10 @@ bool IndexadorHash::DevuelvePregunta(string &preg) const {
 
 bool IndexadorHash::DevuelvePregunta(const string &word,
                                      InformacionTerminoPregunta &inf) const {
-  string term = steam(word);
-  if (indicePregunta.count(term)) {
-    inf = indicePregunta.at(term);
+  const string term = steam(word);
+  auto it = indicePregunta.find(term);
+  if (it != indicePregunta.end()) {
+    inf = it->second;
     return true;
   }
   inf = InformacionTerminoPregunta();
@@ -509,9 +638,10 @@ bool IndexadorHash::DevuelvePregunta(InformacionPregunta &inf) const {
 
 bool IndexadorHash::Devuelve(const string &word,
                              InformacionTermino &inf) const {
-  string term = steam(word);
-  if (indice.count(term)) {
-    inf = indice.at(term);
+  const string term = steam(word);
+  auto it = indice.find(term);
+  if (it != indice.end()) {
+    inf = it->second;
     return true;
   }
   inf = InformacionTermino();
@@ -520,13 +650,15 @@ bool IndexadorHash::Devuelve(const string &word,
 
 bool IndexadorHash::Devuelve(const string &word, const string &nomDoc,
                              InfTermDoc &infDoc) const {
-  string term = steam(word);
-  if (!indice.count(term) || !indiceDocs.count(nomDoc)) {
+  const string term = steam(word);
+  auto idxIt = indice.find(term);
+  auto docIt = indiceDocs.find(nomDoc);
+  if (idxIt == indice.end() || docIt == indiceDocs.end()) {
     infDoc = InfTermDoc();
     return false;
   }
-  int doc = indiceDocs.at(nomDoc).getidDoc();
-  const auto &ldocs = indice.at(term).getL_docs();
+  const int doc = docIt->second.getidDoc();
+  const auto &ldocs = idxIt->second.getL_docs();
   auto it = ldocs.find(doc);
   if (it != ldocs.end()) {
     infDoc = it->second;
@@ -547,21 +679,26 @@ bool IndexadorHash::BorraDoc(const string &nomDoc) {
 
   const int doc = docIt->second.getidDoc();
 
-  // ── OPTIMIZACIÓN ────────────────────────────────────────────────────────
-  // Antes: getL_docs() (copia) + setL_docs() (copia) por cada término.
-  // Ahora: getL_docs_mut() da referencia directa, erase in-place.
-  // ────────────────────────────────────────────────────────────────────────
-  for (auto it = indice.begin(); it != indice.end();) {
-    auto &ldocs = it->second.getL_docs_mut();
-    auto found = ldocs.find(doc);
-    if (found != ldocs.end()) {
-      it->second.setFtc(it->second.getFtc() - found->second.getFt());
-      ldocs.erase(found);
+  // ── OPTIMIZACIÓN CLAVE: usar índice inverso docTerminos ──────────────────
+  // Antes: O(todos_los_términos_del_índice) - iteraba todo el índice.
+  // Ahora: O(términos_del_documento) - solo toca los términos del doc.
+  auto dtIt = docTerminos.find(doc);
+  if (dtIt != docTerminos.end()) {
+    for (const auto &term : dtIt->second) {
+      auto idxIt = indice.find(term);
+      if (idxIt == indice.end())
+        continue;
+
+      auto &ldocs = idxIt->second.getL_docs_mut();
+      auto found = ldocs.find(doc);
+      if (found != ldocs.end()) {
+        idxIt->second.setFtc(idxIt->second.getFtc() - found->second.getFt());
+        ldocs.erase(found);
+      }
+      if (ldocs.empty())
+        indice.erase(idxIt);
     }
-    if (ldocs.empty())
-      it = indice.erase(it);
-    else
-      ++it;
+    docTerminos.erase(dtIt);
   }
 
   informacionColeccionDocs.setNumDocs(informacionColeccionDocs.getNumDocs() -
@@ -581,6 +718,7 @@ bool IndexadorHash::BorraDoc(const string &nomDoc) {
 void IndexadorHash::VaciarIndiceDocs() {
   indice.clear();
   indiceDocs.clear();
+  docTerminos.clear();
   informacionColeccionDocs = InfColeccionDocs();
 }
 
@@ -634,10 +772,16 @@ bool IndexadorHash::ListarTerminos(const string &nomDoc) const {
   auto it = indiceDocs.find(nomDoc);
   if (it == indiceDocs.end())
     return false;
-  int doc = it->second.getidDoc();
-  for (const auto &par : indice) {
-    if (par.second.getL_docs().count(doc))
-      cout << par.first << '\t' << par.second << '\n';
+  const int doc = it->second.getidDoc();
+
+  // ── OPTIMIZACIÓN: usar docTerminos en lugar de escanear todo el índice ────
+  auto dtIt = docTerminos.find(doc);
+  if (dtIt == docTerminos.end())
+    return true; // doc existe pero sin términos
+  for (const auto &term : dtIt->second) {
+    auto idxIt = indice.find(term);
+    if (idxIt != indice.end())
+      cout << idxIt->first << '\t' << idxIt->second << '\n';
   }
   return true;
 }

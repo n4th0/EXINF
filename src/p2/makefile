@@ -1,8 +1,8 @@
 .PHONY= clean 
  
 CC=g++ 
-OPTIONS= -g 
-DEBUG= #-D DEBUG 
+OPTIONS= -g #-O3
+DEBUG= #-D DEBUG
 LIBDIR=lib
 INCLUDEDIR=include
 _OBJ= indexadorHash.o tokenizador.o stemmer.o indexadorInformacion.o

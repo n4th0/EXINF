@@ -1,1 +1,0 @@
-../../p2/include/indexadorInformacion.h
