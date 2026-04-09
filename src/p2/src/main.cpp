@@ -20,8 +20,7 @@ int main() {
 
   std::cerr << "Tiempo: " << duration.count() << " segundos\n";
 
-  // a.ImprimirIndexacion();
+  // cout << a.NumPalIndexadas() << endl;
 
-  // system("rm ./test/corpus/_.tk");
   system("rm ./corpus/*.tk");
 }

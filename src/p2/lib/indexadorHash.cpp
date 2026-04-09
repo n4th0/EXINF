@@ -84,107 +84,98 @@ IndexadorHash &IndexadorHash::operator=(const IndexadorHash &other) {
 IndexadorHash::~IndexadorHash() {}
 
 bool IndexadorHash::IndexarFichero(const string &fichero) {
+  // ── stat único ──────────────────────────────────────────────────────────
+  struct stat st;
+  if (stat(fichero.c_str(), &st) == -1)
+    return false;
+
+  tm *modTm = localtime(&st.st_mtime);
+  Fecha fechaDisco(modTm->tm_mday, modTm->tm_mon + 1, modTm->tm_year + 1900);
+
   int id_doc;
-  ifstream f(fichero);
+  auto it = indiceDocs.find(fichero);
+
+  if (it != indiceDocs.end()) {
+    // fichero ya indexado — comprobar si está desactualizado
+    if (fechaDisco <= it->second.getFechaModificacion())
+      return true;
+
+    id_doc = it->second.getidDoc();
+    BorraDoc(fichero);
+    it = indiceDocs.emplace(fichero, InfDoc()).first; // reutiliza slot
+    it->second.setIdDoc(id_doc);
+  } else {
+    auto [ins, _] = indiceDocs.emplace(fichero, InfDoc());
+    it = ins;
+    id_doc = indiceDocs.size(); // tamaño tras la inserción
+    it->second.setIdDoc(id_doc);
+  }
+
+  // ── rellenar metadatos (stat ya disponible) ─────────────────────────────
+  InfDoc &doc = it->second; // referencia única, cero búsquedas extra
+  doc.setTamBytes(st.st_size);
+  doc.setFechaModificacion(fechaDisco);
+
+  // ── tokenizar y leer .tk ────────────────────────────────────────────────
+  tok.Tokenizar(fichero);
+
+  ifstream f(fichero + ".tk");
   if (!f.is_open())
     return false;
 
-  if (indiceDocs.count(fichero)) {
-    struct stat st;
-    if (stat(fichero.c_str(), &st) == -1)
-      return true;
-    tm *modTm = localtime(&st.st_mtime);
-    Fecha fechaDisco(modTm->tm_mday, modTm->tm_mon + 1, modTm->tm_year + 1900);
-    const Fecha &fechaIdx = indiceDocs.at(fichero).getFechaModificacion();
-    if (fechaDisco <= fechaIdx)
-      return true;
-    int oldId = indiceDocs.at(fichero).getidDoc();
-    BorraDoc(fichero);
-    indiceDocs[fichero] = InfDoc();
-    indiceDocs[fichero].setIdDoc(oldId);
-    id_doc = oldId;
-  } else {
-    indiceDocs[fichero] = InfDoc();
-    indiceDocs[fichero].setIdDoc(indiceDocs.size());
-    id_doc = indiceDocs[fichero].getidDoc();
-  }
-
-  struct stat st;
-  if (stat(fichero.c_str(), &st) == 0) {
-    indiceDocs[fichero].setTamBytes(st.st_size);
-    tm *modTm = localtime(&st.st_mtime);
-    indiceDocs[fichero].setFechaModificacion(
-        Fecha(modTm->tm_mday, modTm->tm_mon + 1, modTm->tm_year + 1900));
-  }
-
-  tok.Tokenizar(fichero);
-  ifstream f2(fichero + ".tk");
-  if (!f2.is_open())
-    return false;
-
-  // Pre-reservamos para reducir rehashing
   indice.reserve(indice.size() + 1024);
 
   string line;
   int posGlobal = 0;
-  unordered_set<string> terminos_este_doc;
+  int numTerminos_este_doc = 0; // sustituye el unordered_set — solo nos
+                                // importa el tamaño al final, no cuáles son
+  // (si necesitas saber cuáles, cambia por unordered_set<string_view> + buffer)
 
-  while (getline(f2, line)) {
+  while (getline(f, line)) {
     if (line.empty()) {
-      posGlobal++;
+      ++posGlobal;
       continue;
     }
 
     const string term = steam(line);
-    indiceDocs[fichero].incNumPal();
+    doc.incNumPal();
 
     if (stopWords.count(term)) {
-      posGlobal++;
+      ++posGlobal;
       continue;
     }
 
-    // ── OPTIMIZACIÓN CLAVE ──────────────────────────────────────────────────
-    // Antes: getL_docs() devolvía copia del mapa → setL_docs() lo volvía a
-    // copiar entero. Ahora: acceso directo por referencia mutable, sin copias.
-    // ────────────────────────────────────────────────────────────────────────
     InformacionTermino &infTerm = indice[term];
-    infTerm.incFtc(); // dudo incluso de que haga falta
-    terminos_este_doc.insert(term);
+    infTerm.incFtc();
 
     InfTermDoc *itd = infTerm.find(id_doc);
-    if (itd == nullptr) {
+    if (!itd) {
       InfTermDoc newDoc;
       newDoc.doc_id = id_doc;
-      if (almacenarPosTerm) {
+      if (almacenarPosTerm)
         newDoc.incPosTerm(posGlobal);
-      }
       infTerm.addL_docs(id_doc, std::move(newDoc));
+      ++numTerminos_este_doc;
     } else {
-      // Document found - update existing entry
-      // itd->incFt();
-      if (almacenarPosTerm) {
+      if (almacenarPosTerm)
         itd->incPosTerm(posGlobal);
-        // cout << term << " llego: " << *itd << endl;
-      }
     }
 
-    indiceDocs[fichero].incNumPalSinParada();
-    posGlobal++;
+    doc.incNumPalSinParada();
+    ++posGlobal;
   }
 
-  indiceDocs[fichero].setNumPalDiferentes(terminos_este_doc.size());
+  doc.setNumPalDiferentes(numTerminos_este_doc);
 
-  // Actualizar estadísticas de colección
-  const InfDoc &doc = indiceDocs[fichero];
-  informacionColeccionDocs.setNumDocs(indiceDocs.size());
-  informacionColeccionDocs.setNumTotalPal(
-      informacionColeccionDocs.getNumTotalPal() + doc.getNumPal());
-  informacionColeccionDocs.setNumTotalPalSinParada(
-      informacionColeccionDocs.getNumTotalPalSinParada() +
-      doc.getNumPalSinParada());
-  informacionColeccionDocs.setNumTotalPalDiferentes(indice.size());
-  informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes() +
-                                       doc.getTamBytes());
+  // ── actualizar colección ────────────────────────────────────────────────
+  auto &col = informacionColeccionDocs;
+  col.setNumDocs(indiceDocs.size());
+  col.setNumTotalPal(col.getNumTotalPal() + doc.getNumPal());
+  col.setNumTotalPalSinParada(col.getNumTotalPalSinParada() +
+                              doc.getNumPalSinParada());
+  col.setNumTotalPalDiferentes(indice.size());
+  col.setTamBytes(col.getTamBytes() + doc.getTamBytes());
+
   return true;
 }
 
@@ -193,16 +184,12 @@ bool IndexadorHash::Indexar(const string &ficheroDocumentos) {
   if (!f.is_open())
     return false;
 
-  bool result = true;
   string line;
-  // int count = 0;
-  while (getline(f, line) && result) {
-    // cout << count << '\n';
-    // count++;
-    if (!line.empty())
-      result = result && IndexarFichero(line);
-  }
-  return result;
+  while (getline(f, line))
+    if (!line.empty() && !IndexarFichero(line))
+      return false;
+
+  return true;
 }
 
 bool IndexadorHash::IndexarDirectorio(const string &dirAIndexar) {
@@ -218,9 +205,8 @@ bool IndexadorHash::IndexarDirectorio(const string &dirAIndexar) {
   return Indexar(".lista_fich");
 }
 
-// TODO: rehacer esto entero (la parte de obtener los InformacionTermino)
 bool IndexadorHash::GuardarIndexacion() const {
-  string dir = directorioIndice.empty() ? "." : directorioIndice;
+  const string dir = directorioIndice.empty() ? "." : directorioIndice;
   mkdir(dir.c_str(), 0755);
 
   ofstream fConfig(dir + "/config.idx");
@@ -234,14 +220,12 @@ bool IndexadorHash::GuardarIndexacion() const {
           << almacenarPosTerm << '\n'
           << directorioIndice << '\n'
           << pregunta << '\n';
-  fConfig.close();
 
   ofstream fStop(dir + "/stopwords.idx");
   if (!fStop.is_open())
     return false;
   for (const auto &w : stopWords)
     fStop << w << '\n';
-  fStop.close();
 
   ofstream fCol(dir + "/coleccion.idx");
   if (!fCol.is_open())
@@ -251,9 +235,7 @@ bool IndexadorHash::GuardarIndexacion() const {
        << informacionColeccionDocs.getNumTotalPalSinParada() << '\n'
        << informacionColeccionDocs.getNumTotalPalDiferentes() << '\n'
        << informacionColeccionDocs.getTamBytes() << '\n';
-  fCol.close();
 
-  // Usar buffer grande para escritura — reduce syscalls
   ofstream fDocs(dir + "/docs.idx");
   if (!fDocs.is_open())
     return false;
@@ -270,28 +252,24 @@ bool IndexadorHash::GuardarIndexacion() const {
           << d.getFechaModificacion().getMonth() << '\n'
           << d.getFechaModificacion().getYear() << '\n';
   }
-  fDocs.close();
 
   ofstream fIdx(dir + "/indice.idx");
   if (!fIdx.is_open())
     return false;
   fIdx.rdbuf()->pubsetbuf(nullptr, 1 << 16);
-
-  // for (const auto &par : indice) {
-  //   const InformacionTermino &inf = par.second;
-  //   fIdx << "TERM " << par.first << '\n' << "ftc " << inf.getFtc() << '\n';
-  //   for (const auto &docPar : inf.getLdocs()) {
-  //     const InfTermDoc &itd = docPar.second;
-  //     const auto &pos = itd.getPosTerm(); // ahora es vector<int>
-  //     fIdx << "DOC " << docPar.first << ' ' << itd.getFt() << ' ' <<
-  //     pos.size(); for (int p : pos)
-  //       fIdx << ' ' << p;
-  //     fIdx << '\n';
-  //   }
-  //   fIdx << "END\n";
-  // }
-
-  fIdx.close();
+  for (const auto &par : indice) {
+    const InformacionTermino &inf = par.second;
+    const vector<InfTermDoc> &docs = inf.getLdocs();
+    fIdx << "TERM " << par.first << ' ' << inf.getFtc() << ' ' << docs.size()
+         << '\n';
+    for (const InfTermDoc &itd : docs) {
+      const vector<int> &pos = itd.getPosTerm();
+      fIdx << "DOC " << itd.doc_id << ' ' << pos.size();
+      for (int p : pos)
+        fIdx << ' ' << p;
+      fIdx << '\n';
+    }
+  }
 
   ofstream fPreg(dir + "/pregunta.idx");
   if (!fPreg.is_open())
@@ -301,19 +279,18 @@ bool IndexadorHash::GuardarIndexacion() const {
         << infPregunta.getNumTotalPalDiferentes() << '\n';
   for (const auto &par : indicePregunta) {
     const InformacionTerminoPregunta &itp = par.second;
-    const auto &pos = itp.getPosTerm(); // ahora es vector<int>
-    fPreg << "TERM " << par.first << ' ' << itp.getFt() << ' ' << pos.size();
+    const vector<int> &pos = itp.getPosTerm();
+    fPreg << par.first << ' ' << itp.getFt() << ' ' << pos.size();
     for (int p : pos)
       fPreg << ' ' << p;
     fPreg << '\n';
   }
-  fPreg.close();
 
   return true;
 }
 
-// TODO: rehacer esto entero (la parte de obtener los InformacionTermino)
 bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
+  // Limpiar estado actual
   indice.clear();
   indiceDocs.clear();
   indicePregunta.clear();
@@ -322,135 +299,144 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
   infPregunta = InformacionPregunta();
   informacionColeccionDocs = InfColeccionDocs();
 
-  string dir = directorioIndexacion.empty() ? "." : directorioIndexacion;
+  const string dir = directorioIndexacion.empty() ? "." : directorioIndexacion;
 
-  ifstream fConfig(dir + "/config.idx");
-  if (!fConfig.is_open())
-    return false;
-  string delims;
-  bool detectComp, minusc;
-  getline(fConfig, ficheroStopWords);
-  getline(fConfig, delims);
-  fConfig >> detectComp >> minusc >> tipoStemmer >> almacenarPosTerm;
-  fConfig.ignore();
-  getline(fConfig, directorioIndice);
-  getline(fConfig, pregunta);
-  fConfig.close();
-
-  tok = Tokenizador(delims, detectComp, minusc);
-
-  ifstream fStop(dir + "/stopwords.idx");
-  if (!fStop.is_open())
-    return false;
-  string w;
-  while (getline(fStop, w))
-    if (!w.empty())
-      stopWords.insert(std::move(w));
-  fStop.close();
-
-  ifstream fCol(dir + "/coleccion.idx");
-  if (!fCol.is_open())
-    return false;
-  int v;
-  fCol >> v;
-  informacionColeccionDocs.setNumDocs(v);
-  fCol >> v;
-  informacionColeccionDocs.setNumTotalPal(v);
-  fCol >> v;
-  informacionColeccionDocs.setNumTotalPalSinParada(v);
-  fCol >> v;
-  informacionColeccionDocs.setNumTotalPalDiferentes(v);
-  fCol >> v;
-  informacionColeccionDocs.setTamBytes(v);
-  fCol.close();
-
-  ifstream fDocs(dir + "/docs.idx");
-  if (!fDocs.is_open())
-    return false;
-  string nomDoc;
-  while (getline(fDocs, nomDoc)) {
-    if (nomDoc.empty())
-      continue;
-    InfDoc d;
-    int id, np, nps, npd, tb, day, month, year;
-    fDocs >> id >> np >> nps >> npd >> tb >> day >> month >> year;
-    fDocs.ignore();
-    d.setIdDoc(id);
-    d.setNumPal(np);
-    d.setNumPalSinParada(nps);
-    d.setNumPalDiferentes(npd);
-    d.setTamBytes(tb);
-    d.setFechaModificacion(Fecha(day, month, year));
-    indiceDocs[std::move(nomDoc)] = std::move(d);
-  }
-  fDocs.close();
-
-  ifstream fIdx(dir + "/indice.idx");
-  if (!fIdx.is_open())
-    return false;
-
-  string token;
-  while (fIdx >> token) {
-    if (token != "TERM")
+  // ── config ──────────────────────────────────────────────────────────────
+  {
+    ifstream f(dir + "/config.idx");
+    if (!f.is_open())
       return false;
-    string term;
-    fIdx >> term;
-    fIdx.ignore();
-    InformacionTermino inf;
-    string tag;
-    int ftc;
-    fIdx >> tag >> ftc;
-    inf.setFtc(ftc);
-    while (fIdx >> tag && tag != "END") {
-      if (tag != "DOC")
-        return false;
-      int idDoc, ft, nPos;
-      fIdx >> idDoc >> ft >> nPos;
-      InfTermDoc itd;
-      // itd.setFt(ft);
-      // OPTIMIZACIÓN: reservar capacidad del vector antes de leer
-      vector<int> pos;
-      pos.reserve(nPos);
-      for (int i = 0; i < nPos; i++) {
-        int p;
-        fIdx >> p;
-        pos.push_back(p);
-      }
-      itd.setPosTerm(std::move(pos));
-      inf.addL_docs(idDoc, std::move(itd));
-    }
-    indice[std::move(term)] = std::move(inf);
+    string delims;
+    bool detectComp, minusc;
+    getline(f, ficheroStopWords);
+    getline(f, delims);
+    f >> detectComp >> minusc >> tipoStemmer >> almacenarPosTerm;
+    f.ignore();
+    getline(f, directorioIndice);
+    getline(f, pregunta);
+    tok = Tokenizador(delims, detectComp, minusc);
   }
-  fIdx.close();
 
-  ifstream fPreg(dir + "/pregunta.idx");
-  if (!fPreg.is_open())
-    return false;
-  int ntp, ntps, ntpd;
-  fPreg >> ntp >> ntps >> ntpd;
-  infPregunta.setNumTotalPal(ntp);
-  infPregunta.setNumTotalPalSinParada(ntps);
-  infPregunta.setNumTotalPalDiferentes(ntpd);
-  fPreg.ignore();
-  string linea;
-  while (getline(fPreg, linea)) {
-    if (linea.empty())
-      continue;
-    istringstream iss(linea);
-    string tag, termP;
-    iss >> tag >> termP;
-    int ft, nPos;
-    iss >> ft >> nPos;
-    InformacionTerminoPregunta itp;
-    itp.setFt(ft);
-    for (int i = 0; i < nPos; i++) {
-      int p;
-      iss >> p;
-      itp.addPosTerm(p);
-    }
-    indicePregunta[std::move(termP)] = std::move(itp);
+  // ── stopwords ───────────────────────────────────────────────────────────
+  {
+    ifstream f(dir + "/stopwords.idx");
+    if (!f.is_open())
+      return false;
+    string w;
+    while (getline(f, w))
+      if (!w.empty())
+        stopWords.insert(std::move(w));
   }
-  fPreg.close();
+
+  // ── colección ────────────────────────────────────────────────────────────
+  {
+    ifstream f(dir + "/coleccion.idx");
+    if (!f.is_open())
+      return false;
+    int nd, ntp, ntps, ntpd, tb;
+    f >> nd >> ntp >> ntps >> ntpd >> tb;
+    informacionColeccionDocs.setNumDocs(nd);
+    informacionColeccionDocs.setNumTotalPal(ntp);
+    informacionColeccionDocs.setNumTotalPalSinParada(ntps);
+    informacionColeccionDocs.setNumTotalPalDiferentes(ntpd);
+    informacionColeccionDocs.setTamBytes(tb);
+  }
+
+  // ── documentos ──────────────────────────────────────────────────────────
+  {
+    ifstream f(dir + "/docs.idx");
+    if (!f.is_open())
+      return false;
+    indiceDocs.reserve(informacionColeccionDocs.getNumDocs());
+    string nomDoc;
+    while (getline(f, nomDoc)) {
+      if (nomDoc.empty())
+        continue;
+      int id, np, nps, npd, tb, day, month, year;
+      f >> id >> np >> nps >> npd >> tb >> day >> month >> year;
+      f.ignore();
+      InfDoc d;
+      d.setIdDoc(id);
+      d.setNumPal(np);
+      d.setNumPalSinParada(nps);
+      d.setNumPalDiferentes(npd);
+      d.setTamBytes(tb);
+      d.setFechaModificacion(Fecha(day, month, year));
+      indiceDocs.emplace(std::move(nomDoc), std::move(d));
+    }
+  }
+
+  // ── índice de términos ───────────────────────────────────────────────────
+  // Formato esperado (el mismo que escribe GuardarIndexacion):
+  //   TERM <term> <ftc> <num_docs>
+  //   DOC <doc_id> <nPos> [pos0 pos1 ...]
+  //   ...
+  {
+    ifstream f(dir + "/indice.idx");
+    if (!f.is_open())
+      return false;
+    indice.reserve(informacionColeccionDocs.getNumTotalPalDiferentes());
+
+    string tag, term;
+    while (f >> tag) {
+      if (tag != "TERM")
+        return false;
+
+      int ftc, numDocs;
+      f >> term >> ftc >> numDocs;
+
+      InformacionTermino inf;
+      inf.setFtc(ftc);
+
+      for (int i = 0; i < numDocs; ++i) {
+        f >> tag; // "DOC"
+        if (tag != "DOC")
+          return false;
+
+        int docId, nPos;
+        f >> docId >> nPos;
+
+        InfTermDoc itd;
+        itd.doc_id = docId;
+        vector<int> pos;
+        pos.reserve(nPos);
+        for (int j = 0; j < nPos; ++j) {
+          int p;
+          f >> p;
+          pos.push_back(p);
+        }
+        itd.setPosTerm(std::move(pos));
+        inf.addL_docs(docId, itd);
+      }
+      indice.emplace(std::move(term), std::move(inf));
+    }
+  }
+
+  // ── pregunta ─────────────────────────────────────────────────────────────
+  {
+    ifstream f(dir + "/pregunta.idx");
+    if (!f.is_open())
+      return false;
+    int ntp, ntps, ntpd;
+    f >> ntp >> ntps >> ntpd;
+    f.ignore();
+    infPregunta.setNumTotalPal(ntp);
+    infPregunta.setNumTotalPalSinParada(ntps);
+    infPregunta.setNumTotalPalDiferentes(ntpd);
+
+    string termP;
+    int ft, nPos;
+    while (f >> termP >> ft >> nPos) {
+      InformacionTerminoPregunta itp;
+      itp.setFt(ft);
+      for (int i = 0; i < nPos; ++i) {
+        int p;
+        f >> p;
+        itp.addPosTerm(p);
+      }
+      indicePregunta.emplace(std::move(termP), std::move(itp));
+    }
+  }
 
   return true;
 }
