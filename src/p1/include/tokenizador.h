@@ -6,7 +6,7 @@
 #include <list>
 
 #define MAX_DELIM 256
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 8192
 
 using namespace std;
 

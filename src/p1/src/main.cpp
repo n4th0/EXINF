@@ -1,28 +1,35 @@
-#include "tokenizador.h"
 #include <iostream>
-#include <list>
 #include <string>
-#include <sys/resource.h>
+#include <list>
+#include "tokenizador.h"
 
 using namespace std;
 
-double getcputime(void) {
-  struct timeval tim;
-  struct rusage ru;
-  getrusage(RUSAGE_SELF, &ru);
-  tim = ru.ru_utime;
-  double t = (double)tim.tv_sec + (double)tim.tv_usec / 1000000.0;
-  tim = ru.ru_stime;
-  t += (double)tim.tv_sec + (double)tim.tv_usec / 1000000.0;
-  return t;
+///////// Comprobación de que vacíe la lista resultado
+
+void imprimirListaSTL(const list<string>& cadena)
+{
+        list<string>::const_iterator itCadena;
+        for(itCadena=cadena.begin();itCadena!=cadena.end();itCadena++)
+        {
+                cout << (*itCadena) << ", ";
+        }
+        cout << endl;
 }
 
-int main() {
+int
+main(void)
+{
+        bool kCasosEspeciales = true, kpasarAminusculas = false;
 
-  long double aa = getcputime();
-  Tokenizador a("\t ,;:.-+/*_`'{}[]()!?&#\"\\<>", true, true);
-  a.TokenizarListaFicheros("./test/listaFicheros.txt"); // TODO EL CORPUS
-  cout << "Ha tardado " << getcputime() - aa << " segundos" << endl;
+        list<string> lt1, lt2;
 
-  return 0;
+Tokenizador a("@.&", true, true);
+list<string> tokens;
+a.DelimitadoresPalabra("/ &_:/.?&-=#@");
+string s = "p0 Http://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013 p1 p2"; 
+
+a.Tokenizar(s, tokens);   
+         imprimirListaSTL(tokens);
+
 }
