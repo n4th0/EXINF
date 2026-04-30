@@ -13,6 +13,19 @@
 #include <sys/types.h>
 using namespace std;
 
+// ostream &operator<<(ostream &s, const IndexadorHash &p) {
+//   s << "Fichero con el listado de palabras de parada: " << p.ficheroStopWords
+//     << '\n';
+//   s << "Tokenizador: " << p.tok << '\n';
+//   s << "Directorio donde se almacenara el indice generado: "
+//     << p.directorioIndice << '\n';
+//   s << "Stemmer utilizado: " << p.tipoStemmer << '\n';
+//   s << "Informacion de la coleccion indexada: " << p.informacionColeccionDocs
+//     << '\n';
+//   s << "Se almacenaran las posiciones de los terminos: " <<
+//   p.almacenarPosTerm; return s;
+// }
+
 string IndexadorHash::steam(const string &s) const {
   string final;
   stemmerPorter stemmer = stemmerPorter();
@@ -84,7 +97,6 @@ IndexadorHash &IndexadorHash::operator=(const IndexadorHash &other) {
 IndexadorHash::~IndexadorHash() {}
 
 bool IndexadorHash::IndexarFichero(const string &fichero) {
-  // ── stat único ──────────────────────────────────────────────────────────
   struct stat st;
   if (stat(fichero.c_str(), &st) == -1)
     return false;
@@ -96,10 +108,8 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
   auto it = indiceDocs.find(fichero);
 
   if (it != indiceDocs.end()) {
-    // fichero ya indexado — comprobar si está desactualizado
     if (fechaDisco <= it->second.getFechaModificacion())
       return true;
-
     id_doc = it->second.getidDoc();
     BorraDoc(fichero);
     it = indiceDocs.emplace(fichero, InfDoc()).first; // reutiliza slot
@@ -111,12 +121,10 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
     it->second.setIdDoc(id_doc);
   }
 
-  // ── rellenar metadatos (stat ya disponible) ─────────────────────────────
   InfDoc &doc = it->second; // referencia única, cero búsquedas extra
   doc.setTamBytes(st.st_size);
   doc.setFechaModificacion(fechaDisco);
 
-  // ── tokenizar y leer .tk ────────────────────────────────────────────────
   tok.Tokenizar(fichero);
 
   ifstream f(fichero + ".tk");
@@ -127,9 +135,7 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
 
   string line;
   int posGlobal = 0;
-  int numTerminos_este_doc = 0; // sustituye el unordered_set — solo nos
-                                // importa el tamaño al final, no cuáles son
-  // (si necesitas saber cuáles, cambia por unordered_set<string_view> + buffer)
+  int numTerminos_este_doc = 0;
 
   while (getline(f, line)) {
     if (line.empty()) {
@@ -152,11 +158,13 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
     if (!itd) {
       InfTermDoc newDoc;
       newDoc.doc_id = id_doc;
+      newDoc.incFt();
       if (almacenarPosTerm)
         newDoc.incPosTerm(posGlobal);
       infTerm.addL_docs(id_doc, std::move(newDoc));
       ++numTerminos_este_doc;
     } else {
+      itd->incFt();
       if (almacenarPosTerm)
         itd->incPosTerm(posGlobal);
     }
@@ -167,7 +175,6 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
 
   doc.setNumPalDiferentes(numTerminos_este_doc);
 
-  // ── actualizar colección ────────────────────────────────────────────────
   auto &col = informacionColeccionDocs;
   col.setNumDocs(indiceDocs.size());
   col.setNumTotalPal(col.getNumTotalPal() + doc.getNumPal());
@@ -264,7 +271,7 @@ bool IndexadorHash::GuardarIndexacion() const {
          << '\n';
     for (const InfTermDoc &itd : docs) {
       const vector<int> &pos = itd.getPosTerm();
-      fIdx << "DOC " << itd.doc_id << ' ' << pos.size();
+      fIdx << "DOC " << itd.doc_id << ' ' << itd.getFt() << ' ' << pos.size();
       for (int p : pos)
         fIdx << ' ' << p;
       fIdx << '\n';
@@ -393,11 +400,12 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
         if (tag != "DOC")
           return false;
 
-        int docId, nPos;
-        f >> docId >> nPos;
+        int docId, ft_val, nPos;
+        f >> docId >> ft_val >> nPos;
 
         InfTermDoc itd;
         itd.doc_id = docId;
+        itd.setFt(ft_val);
         vector<int> pos;
         pos.reserve(nPos);
         for (int j = 0; j < nPos; ++j) {
@@ -552,10 +560,6 @@ bool IndexadorHash::BorraDoc(const string &nomDoc) {
 
   const int doc = docIt->second.getidDoc();
 
-  // ── OPTIMIZACIÓN ────────────────────────────────────────────────────────
-  // Antes: getL_docs() (copia) + setL_docs() (copia) por cada término.
-  // Ahora: getL_docs_mut() da referencia directa, erase in-place.
-  // ────────────────────────────────────────────────────────────────────────
   for (auto it = indice.begin(); it != indice.end();) {
 
     if (it->second.delete_doc(doc)) {

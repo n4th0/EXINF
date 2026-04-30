@@ -51,15 +51,15 @@ public:
   ~InfTermDoc();
   InfTermDoc &operator=(const InfTermDoc &);
 
-  const bool empty() const { return posTerm.size() == 0; }
+  const bool empty() const { return ft == 0; }
 
-  int getFt() const { return posTerm.size(); }
+  int getFt() const { return ft; }
   const vector<int> &getPosTerm() const { return posTerm; }
 
-  // void setFt(int f) { ft = f; }
+  void setFt(int f) { ft = f; }
   void setPosTerm(const vector<int> &p) { posTerm = p; }
 
-  // void incFt() { ft++; }
+  void incFt() { ft++; }
   void incPosTerm(int p) { posTerm.push_back(p); }
 
   int doc_id;
@@ -70,7 +70,7 @@ public:
   bool operator==(int id) const { return doc_id == id; }
 
 private:
-  // int ft;
+  int ft;
   vector<int> posTerm;
 };
 
@@ -258,7 +258,6 @@ public:
   InformacionTerminoPregunta &operator=(const InformacionTerminoPregunta &);
 
   int getFt() const { return ft; }
-  // CAMBIO: vector en lugar de list
   const vector<int> &getPosTerm() const { return posTerm; }
 
   void setFt(int f) { ft = f; }

@@ -1,5 +1,3 @@
-
-
 #include "../include/indexadorInformacion.h"
 #include <ostream>
 
@@ -160,16 +158,16 @@ ostream &operator<<(ostream &s, const InformacionPregunta &p) {
 
 // class InfTermDoc {
 // InfTermDoc::InfTermDoc(const InfTermDoc &) {}
-InfTermDoc::InfTermDoc() : posTerm(), doc_id() {}
+InfTermDoc::InfTermDoc() : ft(0), posTerm(), doc_id() {}
 InfTermDoc::~InfTermDoc() {}
 // InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {}
 
 InfTermDoc::InfTermDoc(const InfTermDoc &p)
-    : posTerm(p.posTerm), doc_id(p.doc_id) {}
+    : ft(p.ft), posTerm(p.posTerm), doc_id(p.doc_id) {}
 
 InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {
   if (this != &p) {
-    // ft = p.ft;
+    ft = p.ft;
     doc_id = p.doc_id;
     posTerm = p.posTerm;
   }
