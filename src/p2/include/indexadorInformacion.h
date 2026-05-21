@@ -149,7 +149,9 @@ public:
   void addL_docs(int a, const InfTermDoc &l) {
     InfTermDoc newDoc = l;
     newDoc.doc_id = a;
-    l_docs2.push_back(std::move(newDoc));
+    // Inserción en orden para mantener el invariante de búsqueda binaria
+    auto it = std::lower_bound(l_docs2.begin(), l_docs2.end(), newDoc);
+    l_docs2.insert(it, std::move(newDoc));
   }
   // void addL_docs(int a, InfTermDoc l) { l_docs[a] = std::move(l); }
   bool delete_doc(int doc_id) {

@@ -1,29 +1,52 @@
-#include "buscador.h"
-#include "indexadorHash.h"
+#include "../include/buscador.h"
+#include "../include/tokenizador.h"
+#include <ctime>
 #include <iostream>
+#include <list>
 #include <string>
+#include <sys/resource.h>
+#include <sys/time.h>
 
 using namespace std;
 
-int main() {
-  IndexadorHash b("./StopWordsEspanyol.txt", ". ,:", false, false,
-                  "./indicePrueba", 0, false);
+double getcputime(void) {
+  struct timeval tim;
+  struct rusage ru;
+  getrusage(RUSAGE_SELF, &ru);
+  tim = ru.ru_utime;
+  double t = (double)tim.tv_sec + (double)tim.tv_usec / 1000000.0;
+  tim = ru.ru_stime;
+  t += (double)tim.tv_sec + (double)tim.tv_usec / 1000000.0;
+  return t;
+}
 
-  b.Indexar("./listaFicheros_corto.txt");
+int main() {
+  IndexadorHash b("./StopWordsEspanyol.txt", "./,.", false, false,
+                  "./indicePruebaEspanyol", 0, false);
+  b.Indexar("ficherosTimes.txt");
   b.GuardarIndexacion();
 
-  Buscador a("./indicePrueba", 0);
-  string preg;
-  double kk1;
-  double kb;
+  Buscador a("./indicePruebaEspanyol", 0);
+  // cout << "llego" << endl;
 
-  a.IndexarPregunta("pal1 pal4 pal2 pal3 pal1. pal2, pal4 pal2");
+  a.IndexarPregunta("KENNEDY ADMINISTRATION PRESSURE ON NGO DINH DIEM TO STOP "
+                    "SUPPRESSING THE BUDDHISTS.");
 
-  if (a.Buscar(1000))
-    a.ImprimirResultadoBusqueda(10000);
+  double aa = getcputime();
+  a.Buscar(423);
+  a.ImprimirResultadoBusqueda(423);
 
-  a.CambiarFormulaSimilitud(1);
+  double bb = getcputime() - aa;
+  cout << "\nHa tardado " << bb << " segundos\n\n";
 
-  if (a.Buscar(100))
-    a.ImprimirResultadoBusqueda(1000);
+  time_t inicioB, finB;
+  time(&inicioB);
+  double aaB = getcputime();
+  a.Buscar("CorpusTime/Preguntas/", 423, 1, 83);
+  a.ImprimirResultadoBusqueda(423);
+
+  double bbB = getcputime() - aaB;
+  cout << "\nHa tardado " << bbB << " segundos\n\n";
+
+  return 0;
 }

@@ -27,6 +27,7 @@ class IndexadorHash {
   }
 
 public:
+  string normalizar(const string &word) const;
   IndexadorHash(const string &fichStopWords, const string &delimitadores,
                 const bool &detectComp, const bool &minuscSinAcentos,
                 const string &dirIndice, const int &tStemmer,
@@ -331,6 +332,7 @@ private:
   // minuscSinAcentos, entonces se guardarán los términos en minúsculas y sin
   // acentos)
 
+  unordered_set<string> stopWordsOriginales; // para ListarPalParada
   string directorioIndice;
   // "directorioIndice" será el directorio del disco duro donde se almacenará el
   // índice. En caso que contenga la cadena vacía se creará en el directorio

@@ -1,4 +1,5 @@
 #include "../include/indexadorInformacion.h"
+#include <algorithm>
 #include <ostream>
 
 #include <ctime>
@@ -59,12 +60,10 @@ void Fecha::setDay(int d) {
   validar(d, month, year);
   day = d;
 }
-
 void Fecha::setMonth(int m) {
   validar(day, m, year);
   month = m;
 }
-
 void Fecha::setYear(int y) {
   validar(day, month, y);
   year = y;
@@ -74,7 +73,6 @@ bool operator==(const Fecha &a, const Fecha &b) {
   return a.getYear() == b.getYear() && a.getMonth() == b.getMonth() &&
          a.getDay() == b.getDay();
 }
-
 bool operator<(const Fecha &a, const Fecha &b) {
   if (a.getYear() != b.getYear())
     return a.getYear() < b.getYear();
@@ -82,7 +80,6 @@ bool operator<(const Fecha &a, const Fecha &b) {
     return a.getMonth() < b.getMonth();
   return a.getDay() < b.getDay();
 }
-
 bool operator>(const Fecha &a, const Fecha &b) { return b < a; }
 bool operator<=(const Fecha &a, const Fecha &b) { return !(a > b); }
 bool operator>=(const Fecha &a, const Fecha &b) { return !(a < b); }
@@ -94,28 +91,17 @@ std::ostream &operator<<(std::ostream &s, const Fecha &f) {
   return s;
 }
 
-///////////////////////
 ostream &operator<<(ostream &s, const InfTermDoc &p) {
   s << "ft: " << p.getFt();
-
-  for (auto it = p.posTerm.begin(); it != p.posTerm.end(); it++) {
+  for (auto it = p.posTerm.begin(); it != p.posTerm.end(); it++)
     s << "\t" << (*it);
-  }
-  // A continuación se mostrarían todos los elementos de p.posTerm ("posicion
-  // TAB posicion TAB ... posicion, es decir nunca finalizará en un TAB"): s <<
-  // "\t" << posicion;
   return s;
 }
 
 ostream &operator<<(ostream &s, const InformacionTermino &p) {
   s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs2.size();
-
-  for (auto it = p.l_docs2.begin(); it != p.l_docs2.end(); it++) {
+  for (auto it = p.l_docs2.begin(); it != p.l_docs2.end(); it++)
     s << "\tId.Doc: " << (*it).doc_id << "\t" << (*it);
-  }
-
-  // A continuación se mostrarían todos los elementos de p.l_docs: s <<
-  // "\tId.Doc: " << idDoc << "\t" << InfTermDoc;
   return s;
 }
 
@@ -137,15 +123,8 @@ ostream &operator<<(ostream &s, const InfColeccionDocs &p) {
 
 ostream &operator<<(ostream &s, const InformacionTerminoPregunta &p) {
   s << "ft: " << p.ft;
-
-  for (auto it = p.posTerm.begin(); it != p.posTerm.end(); it++) {
-    // s <<  << '\t';
-    s << "\t" << (*it); // así?
-  }
-
-  // A continuación se mostrarían todos los elementos de p.posTerm ("posicion
-  // TAB posicion TAB ... posicion, es decir nunca finalizará en un TAB"): s <<
-  // "\t" << posicion;
+  for (auto it = p.posTerm.begin(); it != p.posTerm.end(); it++)
+    s << "\t" << (*it);
   return s;
 }
 
@@ -156,11 +135,8 @@ ostream &operator<<(ostream &s, const InformacionPregunta &p) {
   return s;
 }
 
-// class InfTermDoc {
-// InfTermDoc::InfTermDoc(const InfTermDoc &) {}
 InfTermDoc::InfTermDoc() : ft(0), posTerm(), doc_id() {}
 InfTermDoc::~InfTermDoc() {}
-// InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {}
 
 InfTermDoc::InfTermDoc(const InfTermDoc &p)
     : ft(p.ft), posTerm(p.posTerm), doc_id(p.doc_id) {}
@@ -174,24 +150,17 @@ InfTermDoc &InfTermDoc::operator=(const InfTermDoc &p) {
   return *this;
 }
 
-// InformacionTermino
 InformacionTermino::InformacionTermino(const InformacionTermino &p)
     : ftc(p.ftc), l_docs2(p.l_docs2) {}
 
-// unordered_map<int, InfTermDoc> InformacionTermino::getLdocs() const { return
-// this->l_docs; }
+InformacionTermino::InformacionTermino() { this->ftc = 0; }
 
-// class InformacionTermino {
-// InformacionTermino::InformacionTermino(const InformacionTermino &) {}
-InformacionTermino::InformacionTermino() {
-  this->ftc = 0;
-} // Inicializa ftc = 0
 InformacionTermino::~InformacionTermino() {
   this->ftc = 0;
   l_docs2.clear();
-} // Pone ftc = 0 y vacía l_docs
-InformacionTermino &InformacionTermino::operator=(const InformacionTermino &p) {
+}
 
+InformacionTermino &InformacionTermino::operator=(const InformacionTermino &p) {
   if (this != &p) {
     this->l_docs2 = p.l_docs2;
     this->ftc = p.ftc;
@@ -199,7 +168,31 @@ InformacionTermino &InformacionTermino::operator=(const InformacionTermino &p) {
   return *this;
 }
 
-// class InfDoc {
+// // FIX: inserción ordenada para mantener invariante de búsqueda binaria
+// void InformacionTermino::addL_docs(int a, const InfTermDoc &l) {
+//   InfTermDoc newDoc = l;
+//   newDoc.doc_id = a;
+//   auto it = std::lower_bound(l_docs2.begin(), l_docs2.end(), newDoc);
+//   l_docs2.insert(it, std::move(newDoc));
+// }
+
+// bool InformacionTermino::delete_doc(int doc_id) {
+//   int left = 0;
+//   int right = (int)l_docs2.size() - 1;
+//   while (left <= right) {
+//     int mid = left + (right - left) / 2;
+//     if (l_docs2[mid].doc_id == doc_id) {
+//       ftc -= l_docs2[mid].getFt();
+//       l_docs2.erase(l_docs2.begin() + mid);
+//       return true;
+//     } else if (l_docs2[mid].doc_id < doc_id) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return false;
+// }
 
 InfDoc::InfDoc(const string &file)
     : fechaModificacion(), idDoc(0), numPal(0), numPalSinParada(0),
@@ -215,10 +208,10 @@ InfDoc::InfDoc(const InfDoc &p)
 InfDoc::InfDoc()
     : fechaModificacion(), idDoc(0), numPal(0), numPalSinParada(0),
       numPalDiferentes(0), tamBytes(0) {}
+
 InfDoc::~InfDoc() = default;
 
 InfDoc &InfDoc::operator=(const InfDoc &p) {
-
   if (this != &p) {
     this->fechaModificacion = p.fechaModificacion;
     this->idDoc = p.idDoc;
@@ -230,15 +223,17 @@ InfDoc &InfDoc::operator=(const InfDoc &p) {
   return *this;
 }
 
-// class InfColeccionDocs {
 InfColeccionDocs::InfColeccionDocs(const InfColeccionDocs &p)
     : tamBytes(p.tamBytes), numDocs(p.numDocs), numTotalPal(p.numTotalPal),
       numTotalPalSinParada(p.numTotalPalSinParada),
       numTotalPalDiferentes(p.numTotalPalDiferentes) {}
+
 InfColeccionDocs::InfColeccionDocs()
     : tamBytes(), numDocs(), numTotalPal(), numTotalPalSinParada(),
       numTotalPalDiferentes() {}
+
 InfColeccionDocs::~InfColeccionDocs() = default;
+
 InfColeccionDocs &InfColeccionDocs::operator=(const InfColeccionDocs &p) {
   if (this != &p) {
     this->tamBytes = p.tamBytes;
@@ -250,20 +245,15 @@ InfColeccionDocs &InfColeccionDocs::operator=(const InfColeccionDocs &p) {
   return *this;
 }
 
-// class InformacionTerminoPregunta {
-//
-// int ft; // Frecuencia total del término en la pregunta
-// list<int> posTerm;
-//
-
 InformacionTerminoPregunta::InformacionTerminoPregunta(
     const InformacionTerminoPregunta &p)
     : ft(p.ft), posTerm(p.posTerm) {}
+
 InformacionTerminoPregunta::InformacionTerminoPregunta() : ft(), posTerm() {}
 InformacionTerminoPregunta::~InformacionTerminoPregunta() {}
+
 InformacionTerminoPregunta &
 InformacionTerminoPregunta::operator=(const InformacionTerminoPregunta &p) {
-
   if (this != &p) {
     this->ft = p.ft;
     this->posTerm = p.posTerm;
@@ -271,14 +261,15 @@ InformacionTerminoPregunta::operator=(const InformacionTerminoPregunta &p) {
   return *this;
 }
 
-// class InformacionPregunta {
-
 InformacionPregunta::InformacionPregunta(const InformacionPregunta &p)
     : numTotalPal(p.numTotalPal), numTotalPalSinParada(p.numTotalPalSinParada),
       numTotalPalDiferentes(p.numTotalPalDiferentes) {}
+
 InformacionPregunta::InformacionPregunta()
     : numTotalPal(), numTotalPalSinParada(), numTotalPalDiferentes() {}
+
 InformacionPregunta::~InformacionPregunta() = default;
+
 InformacionPregunta &
 InformacionPregunta::operator=(const InformacionPregunta &p) {
   if (this != &p) {

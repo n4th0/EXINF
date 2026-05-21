@@ -45,6 +45,7 @@ Buscador::Buscador(const string &directorioIndexacion, const int &f)
   c = 2.0;
   k1 = 1.2;
   b = 0.75;
+  // this->RecuperarIndexacion(directorioIndexacion);
 }
 
 Buscador::Buscador(const Buscador &b) : IndexadorHash(b) {
@@ -106,33 +107,33 @@ double Buscador::PuntuacionDFR(const InformacionTermino &infTerm,
     return 0.0;
 
   double N = static_cast<double>(infColeccion.getNumDocs());
+  if (N <= 0.0)
+    return 0.0;
+
   double ft = static_cast<double>(infTerm.getFtc());
-  double ftd = static_cast<double>(infTermDoc.getFt());
-  double ftq = static_cast<double>(infTermPreg.getFt());
-  double ld = static_cast<double>(infDocumento.getNumPalSinParada());
-  double avg_ld =
-      (N > 0) ? static_cast<double>(infColeccion.getNumTotalPalSinParada()) / N
-              : 1.0;
-
-  if (ld == 0.0)
-    ld = 1.0;
-
-  double tf_star = ftd * log2(1.0 + c * avg_ld / ld);
   double lambda = ft / N;
-
   if (lambda <= 0.0)
     return 0.0;
 
+  // Precalcular logs de lambda (una sola vez)
+  double log_lambda1 = log2(1.0 + lambda);       // log2(1 + λ)
+  double log_ratio = log_lambda1 - log2(lambda); // log2((1+λ)/λ)
+
+  double ftd = static_cast<double>(infTermDoc.getFt());
+  double ld = static_cast<double>(infDocumento.getNumPalSinParada());
+  if (ld == 0.0)
+    ld = 1.0;
+
+  double avg_ld =
+      static_cast<double>(infColeccion.getNumTotalPalSinParada()) / N;
+  double tf_star = ftd * log2(1.0 + c * avg_ld / ld);
+
   double nt = static_cast<double>(infTerm.getLdocs().size());
+  double w_id =
+      (log_lambda1 + tf_star * log_ratio) * (ft + 1.0) / (nt * (tf_star + 1.0));
 
-  // Fórmula w_id
-  double w_id = (log2(1.0 + lambda) + tf_star * log2((1.0 + lambda) / lambda)) *
-                (ft + 1.0) / (nt * (tf_star + 1.0));
-
-  // Peso de la query
-  double w_iq = ftq / k;
-
-  return w_iq * w_id;
+  double ftq = static_cast<double>(infTermPreg.getFt());
+  return (ftq / k) * w_id;
 }
 
 // ---------------------------------------------------------------------------
@@ -251,16 +252,8 @@ bool Buscador::Buscar(const string &dirPreguntas, const int &numDocumentos,
   return true;
 }
 
-// ---------------------------------------------------------------------------
-// Métodos de Salida
-// ---------------------------------------------------------------------------
-
 void Buscador::ImprimirResultadoBusqueda(const int &numDocumentos) const {
-  // CRITICO: Configurar el flujo para 6 cifras significativas (formato por
-  // defecto) No usar fixed ni showpoint para que el redondeo y los ceros sean
-  // como espera el test
-  cout << std::defaultfloat << std::setprecision(6);
-
+  // cout << std::defaultfloat << std::setprecision(6);
   string formula = (formSimilitud == 0) ? "DFR" : "BM25";
   int pregActual = -1;
   int posicion = 0;
@@ -298,8 +291,10 @@ void Buscador::ImprimirResultadoBusqueda(const int &numDocumentos) const {
     string etiqPreg =
         (res.getNumPregunta() == 0) ? pregIndex : "ConjuntoDePreguntas";
 
-    cout << res.getNumPregunta() << " " << formula << " " << nomDoc << " "
-         << posicion << " " << res.VSimilitud() << " " << etiqPreg << "\n";
+    // std::cout << std << x;
+    cout << fixed << setprecision(6) << res.getNumPregunta() << " " << formula
+         << " " << nomDoc << " " << posicion << " " << res.VSimilitud() << " "
+         << etiqPreg << "\n";
 
     posicion++;
   }

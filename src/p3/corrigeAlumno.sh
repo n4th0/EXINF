@@ -109,8 +109,12 @@ function testOK() {
 
 function corrige() {
 
-  # Empieza la correccion
   for FICH in $DIROK1/*.cpp; do
+
+    if [[ "$(basename "$FICH")" == "main.cpp" ]]; then
+      continue
+    fi
+
     echo -e "\n----------------------------------------------"
     echo -e $FICH
     echo -e "----------------------------------------------\n"

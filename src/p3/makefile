@@ -1,7 +1,7 @@
 .PHONY: clean
 
 CC = g++
-OPTIONS = -g
+OPTIONS = -g #-O3
 DEBUG =
 LIBDIR = lib
 INCLUDEDIR = include
@@ -10,6 +10,14 @@ _OBJ = buscador.o indexadorHash.o tokenizador.o stemmer.o indexadorInformacion.o
 OBJ = $(patsubst %,$(LIBDIR)/%,$(_OBJ))
 
 all: buscador
+
+test: all
+	@cp src/main.cpp /tmp/main.cpp
+	@./corrigeAlumno.sh
+	@cp /tmp/main.cpp src/main.cpp
+	@make run
+
+
 
 run: all
 	@./buscador
