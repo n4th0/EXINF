@@ -20,7 +20,7 @@ test: all
 
 
 run: all
-	@./buscador
+	@./buscador 0
 
 buscador: src/main.cpp $(OBJ)
 	@$(CC) $(OPTIONS) $(DEBUG) -I$(INCLUDEDIR) src/main.cpp $(OBJ) -o buscador

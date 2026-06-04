@@ -144,7 +144,8 @@ bool IndexadorHash::IndexarFichero(const string &fichero) {
       continue;
     }
 
-    const string term = steam(line);
+    const string term = normalizar(line);
+    // const string term = steam(line);
     doc.incNumPal();
 
     // Skip blank/whitespace-only terms after stemming
@@ -321,8 +322,18 @@ bool IndexadorHash::GuardarIndexacion() const {
   ofstream fConfig(dir + "/config.idx");
   if (!fConfig.is_open())
     return false;
+
+  // Write delimiters as hex to preserve unicode and special characters
+  const string &delims = tok.DelimitadoresPalabra();
+  string delimsHex;
+  for (unsigned char c : delims) {
+    char buf[3];
+    snprintf(buf, sizeof(buf), "%02x", c);
+    delimsHex += buf;
+  }
+
   fConfig << ficheroStopWords << '\n'
-          << tok.DelimitadoresPalabra() << '\n'
+          << delimsHex << '\n'
           << tok.CasosEspeciales() << '\n'
           << tok.PasarAminuscSinAcentos() << '\n'
           << tipoStemmer << '\n'
@@ -371,8 +382,6 @@ bool IndexadorHash::GuardarIndexacion() const {
     const vector<InfTermDoc> &docs = inf.getLdocs();
     if (docs.empty())
       continue;
-    // Term on its own line to handle multi-word terms with spaces
-
     if (par.first.find_first_not_of(" \t\r\n") == string::npos)
       continue;
     fIdx << "TERM\n"
@@ -425,9 +434,10 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
     }
 
     string detectCompStr, minuscStr, tipoStemmerStr, almacenarPosTermStr;
-    string delims;
     getline(f, ficheroStopWords);
-    getline(f, delims);
+    string delimsHex;
+    getline(f, delimsHex);
+    string delims;
     getline(f, detectCompStr);
     getline(f, minuscStr);
     getline(f, tipoStemmerStr);
@@ -435,11 +445,20 @@ bool IndexadorHash::RecuperarIndexacion(const string &directorioIndexacion) {
     getline(f, directorioIndice);
     getline(f, pregunta);
 
+    for (size_t i = 0; i + 1 < delimsHex.size(); i += 2)
+      delims += static_cast<char>(stoi(delimsHex.substr(i, 2), nullptr, 16));
+    // then use delims instead of the raw string:
+    // cerr << "DEBUG delims recovered (" << delims.size() << " chars): ["
+    //      << delims << "]\n";
+    // cerr << "DEBUG minusc: " << minuscStr << " detectComp: " << detectCompStr
+    // << "\n";
     bool detectComp = (detectCompStr == "1");
     bool minusc = (minuscStr == "1");
     tipoStemmer = stoi(tipoStemmerStr);
     almacenarPosTerm = (almacenarPosTermStr == "1");
+
     tok = Tokenizador(delims, detectComp, minusc);
+    // tok = Tokenizador(delims, detectComp, minusc);
   }
 
   // ── stopwords ───────────────────────────────────────────────────────────

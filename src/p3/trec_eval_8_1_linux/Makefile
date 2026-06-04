@@ -5,8 +5,8 @@ VERSIONID = 8.1
 
 # gcc
 CC       = gcc
-CFLAGS   = -g -I$H -O3 -Wall -DVERSIONID=\"$(VERSIONID)\"
-CFLAGS   = -g -I$H  -Wall -DVERSIONID=\"$(VERSIONID)\"
+CFLAGS   = -g -I$H -O3 -Wall -DVERSIONID=\"$(VERSIONID)\" -std=gnu89
+CFLAGS   = -g -I$H  -Wall -DVERSIONID=\"$(VERSIONID)\" -std=gnu89
 
 # cc
 ###CC       = cc

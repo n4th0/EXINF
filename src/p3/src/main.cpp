@@ -1,14 +1,10 @@
 #include "../include/buscador.h"
-#include "../include/tokenizador.h"
-#include <ctime>
+#include <cstdlib>
 #include <iostream>
 #include <list>
 #include <string>
 #include <sys/resource.h>
-#include <sys/time.h>
-
 using namespace std;
-
 double getcputime(void) {
   struct timeval tim;
   struct rusage ru;
@@ -21,32 +17,27 @@ double getcputime(void) {
 }
 
 int main() {
-  IndexadorHash b("./StopWordsEspanyol.txt", "./,.", false, false,
-                  "./indicePruebaEspanyol", 0, false);
+  IndexadorHash b("./StopWordsEspanyol.txt", ". ,:", false, true,
+                  "./indicePruebaEspanyol", 1, false);
   b.Indexar("ficherosTimes.txt");
   b.GuardarIndexacion();
 
-  Buscador a("./indicePruebaEspanyol", 0);
-  // cout << "llego" << endl;
-
+  Buscador a("./indicePruebaEspanyol", 1);
   a.IndexarPregunta("KENNEDY ADMINISTRATION PRESSURE ON NGO DINH DIEM TO STOP "
-                    "SUPPRESSING THE BUDDHISTS.");
-
+                    "SUPPRESSING THE BUDDHISTS . ");
   double aa = getcputime();
   a.Buscar(423);
   a.ImprimirResultadoBusqueda(423);
-
   double bb = getcputime() - aa;
   cout << "\nHa tardado " << bb << " segundos\n\n";
-
   time_t inicioB, finB;
   time(&inicioB);
   double aaB = getcputime();
-  a.Buscar("CorpusTime/Preguntas/", 423, 1, 83);
+  a.Buscar("/home/n4th0/EXINF/src/p3/CorpusTime/Preguntas/", 423, 1, 83);
   a.ImprimirResultadoBusqueda(423);
-
+  // a.ImprimirResultadoBusqueda(423, "fich_salida_buscador_alumno.txt");
   double bbB = getcputime() - aaB;
-  cout << "\nHa tardado " << bbB << " segundos\n\n";
+  system("rm CorpusTime/Documentos/*.tk");
 
-  return 0;
+  cout << "\nHa tardado " << bbB << " segundos\n\n";
 }

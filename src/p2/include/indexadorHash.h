@@ -277,7 +277,10 @@ public:
   }
 
   unordered_map<string, InfDoc> &getIndiceDocs() { return indiceDocs; }
-  unordered_map<string, InfDoc> getIndiceDocs() const { return indiceDocs; }
+  const unordered_map<string, InfDoc> &getIndiceDocs() const {
+    return indiceDocs;
+  }
+  // unordered_map<string, InfDoc> getIndiceDocs() const { return indiceDocs; }
 
   InfColeccionDocs &getInformacionColeccionDocs() {
     return informacionColeccionDocs;
